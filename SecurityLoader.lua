@@ -260,7 +260,7 @@ function SecurityLoader.LoadModule(moduleName)
     
     local url = nil
     
-    -- Get URL from encryptedURLs (now contains direct URLs)
+        -- Get URL from encryptedURLs (now contains direct URLs)
     local encrypted = encryptedURLs[moduleName]
     if encrypted then
         -- Check if it's a direct URL (starts with http) or encrypted string
@@ -301,7 +301,7 @@ function SecurityLoader.LoadModule(moduleName)
         if not CONFIG.ENABLE_DOMAIN_CHECK then
             warn("   ⚠️ Domain check disabled - continuing anyway")
         else
-            return nil
+        return nil
         end
     end
     
@@ -331,11 +331,97 @@ function SecurityLoader.LoadModule(moduleName)
             error("Empty script content from URL: " .. url)
         end
         
+        -- Debug: Check what we actually got (for all modules to diagnose)
+        print("📄 Module:", moduleName)
+        print("📄 URL:", url)
+        print("📄 Content length:", #scriptContent, "chars")
+        
+        -- Check if it's HTML error page (404, etc)
+        if scriptContent:find("<!DOCTYPE") or scriptContent:find("<html") or scriptContent:find("404") or scriptContent:find("Not Found") or scriptContent:find("Page not found") then
+            local preview = scriptContent:sub(1, 500)
+            warn("⚠️ Received HTML error page instead of Lua code!")
+            warn("   Preview:", preview)
+            error("HTML error page received - file might not exist at: " .. url .. "\n   Make sure file is uploaded to GitHub repository!")
+        end
+        
+        -- Check if content looks like Lua code
+        if not scriptContent:find("local") and not scriptContent:find("function") and not scriptContent:find("return") then
+            warn("⚠️ Content doesn't look like Lua code for:", moduleName)
+            warn("   First 200 chars:", scriptContent:sub(1, 200))
+            warn("   ⚠️ File might be empty or corrupted!")
+        end
+        
+        -- Show first/last chars for debugging
+        if moduleName == "Notify" or moduleName == "Webhook" or moduleName == "HideStats" then
+            print("📄 First 200 chars:", scriptContent:sub(1, 200):gsub("\n", "\\n"):gsub("\r", "\\r"))
+            print("📄 Last 100 chars:", scriptContent:sub(-100):gsub("\n", "\\n"):gsub("\r", "\\r"))
+        end
+        
+        -- Clean script content (remove BOM, trim whitespace, remove null bytes)
+        -- Remove UTF-8 BOM if present
+        if scriptContent:sub(1, 3) == string.char(239, 187, 191) then
+            scriptContent = scriptContent:sub(4)
+        end
+        -- Remove null bytes (sometimes appear in corrupted downloads)
+        scriptContent = scriptContent:gsub("%z", "")
+        -- Remove leading/trailing whitespace (but keep content)
+        scriptContent = scriptContent:gsub("^%s+", ""):gsub("%s+$", "")
+        
+        -- Validate content is not empty after cleaning
+        if not scriptContent or scriptContent == "" then
+            error("Script content is empty after cleaning for: " .. moduleName)
+        end
+        
         -- Load and execute the script
-        local loadedScript = loadstring(scriptContent)
+        -- Try different loadstring methods for compatibility
+        local loadedScript, loadError = nil, nil
+        
+        -- Method 1: Standard loadstring
+        loadedScript, loadError = loadstring(scriptContent)
+        
+        -- Method 2: loadstring with chunkname (some executors)
+        if not loadedScript then
+            loadedScript, loadError = loadstring(scriptContent, moduleName)
+        end
+        
+        -- Method 3: Try load() if available
+        if not loadedScript and load then
+            local success, result = pcall(function()
+                return load(scriptContent)
+            end)
+            if success and result then
+                loadedScript = result
+            end
+        end
         
         if not loadedScript then
-            error("loadstring returned nil for: " .. moduleName)
+            local errorMsg = "❌ loadstring returned nil for: " .. moduleName
+            errorMsg = errorMsg .. "\n   URL: " .. url
+            errorMsg = errorMsg .. "\n   Content length: " .. tostring(#scriptContent) .. " chars"
+            
+            if loadError then
+                errorMsg = errorMsg .. "\n   Syntax error: " .. tostring(loadError)
+            end
+            
+            -- Show content preview
+            if #scriptContent > 0 then
+                local preview = scriptContent:sub(1, 300):gsub("\n", "\\n"):gsub("\r", "\\r")
+                errorMsg = errorMsg .. "\n   First 300 chars: " .. preview
+            else
+                errorMsg = errorMsg .. "\n   ⚠️ Content is EMPTY - file might not exist on GitHub!"
+            end
+            
+            -- Check for common issues
+            if scriptContent:find("<!DOCTYPE") or scriptContent:find("<html") or scriptContent:find("404") then
+                errorMsg = errorMsg .. "\n   ⚠️ Received HTML error page (404 Not Found?)"
+                errorMsg = errorMsg .. "\n   💡 Pastikan file sudah di-upload ke GitHub repository!"
+                errorMsg = errorMsg .. "\n   💡 Cek URL di browser: " .. url
+            elseif not scriptContent:find("local") and not scriptContent:find("function") then
+                errorMsg = errorMsg .. "\n   ⚠️ Content doesn't look like Lua code!"
+                errorMsg = errorMsg .. "\n   💡 File mungkin kosong atau corrupt!"
+            end
+            
+            error(errorMsg)
         end
         
         -- Execute the script
