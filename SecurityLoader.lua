@@ -11,7 +11,7 @@ local CONFIG = {
     ALLOWED_DOMAIN = "raw.githubusercontent.com",
     MAX_LOADS_PER_SESSION = 100,
     ENABLE_RATE_LIMITING = true,
-    ENABLE_DOMAIN_CHECK = true,
+    ENABLE_DOMAIN_CHECK = false,  -- DISABLED: Domain validation bypassed
     ENABLE_VERSION_CHECK = false,
     USE_DIRECT_URLS = true  -- Skip encrypted URLs, use direct URLs from modulePaths
 }
@@ -96,10 +96,16 @@ local function checkRateLimit()
 end
 
 -- ============================================
--- DOMAIN VALIDATION
+-- DOMAIN VALIDATION (BYPASSED)
 -- ============================================
 local function validateDomain(url)
+    -- Domain validation disabled - always return true
     if not CONFIG.ENABLE_DOMAIN_CHECK then
+        return true
+    end
+    
+    -- Skip validation for BASE_URL
+    if url and url:find(BASE_URL, 1, true) then
         return true
     end
     
@@ -283,12 +289,17 @@ function SecurityLoader.LoadModule(moduleName)
         return nil
     end
     
-    -- Final validation (should always pass for BASE_URL)
+    -- Final validation (bypassed if ENABLE_DOMAIN_CHECK = false)
     if not validateDomain(url) then
         warn("🚫 Security: Invalid domain for module:", moduleName)
         warn("   URL:", url)
         warn("   Expected domain:", CONFIG.ALLOWED_DOMAIN)
-        return nil
+        -- Continue anyway if domain check is disabled
+        if not CONFIG.ENABLE_DOMAIN_CHECK then
+            warn("   ⚠️ Domain check disabled - continuing anyway")
+        else
+            return nil
+        end
     end
     
     local success, result = pcall(function()
@@ -381,7 +392,8 @@ print("━━━━━━━━━━━━━━━━━━━━━━")
 print("🔒 Jazzy Security Loader v" .. CONFIG.VERSION)
 print("✅ Total Modules: 28 (EventTeleport added!)")
 print("✅ Rate Limiting:", CONFIG.ENABLE_RATE_LIMITING and "ENABLED" or "DISABLED")
-print("✅ Domain Check:", CONFIG.ENABLE_DOMAIN_CHECK and "ENABLED" or "DISABLED")
+print("⚠️ Domain Check:", CONFIG.ENABLE_DOMAIN_CHECK and "ENABLED" or "DISABLED (BYPASSED)")
+print("✅ Direct URLs:", CONFIG.USE_DIRECT_URLS and "ENABLED" or "DISABLED")
 print("━━━━━━━━━━━━━━━━━━━━━━")
 
 return SecurityLoader
