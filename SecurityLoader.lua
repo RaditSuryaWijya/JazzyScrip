@@ -160,7 +160,7 @@ end
 -- MODULE PATH MAPPING
 -- Base URL: https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/Project_code/
 -- ============================================
-local BASE_URL = "https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/Project_code/"
+local BASE_URL = "https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/main/Project_code/"
 
 local modulePaths = {
     instant = "Instant.lua",
