@@ -487,7 +487,7 @@ new("UICorner", {Parent = scriptHeader, CornerRadius = UDim.new(0, 12)})
 -- Title
 local titleLabel = new("TextLabel", {
     Parent = scriptHeader,
-    Text = "LynX",
+    Text = "Jazzy",
     Size = UDim2.new(0, 80, 1, 0),
     Position = UDim2.new(0, 15, 0, 0),
     BackgroundTransparency = 1,
