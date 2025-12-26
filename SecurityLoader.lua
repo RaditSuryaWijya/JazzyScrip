@@ -12,7 +12,8 @@ local CONFIG = {
     MAX_LOADS_PER_SESSION = 100,
     ENABLE_RATE_LIMITING = true,
     ENABLE_DOMAIN_CHECK = true,
-    ENABLE_VERSION_CHECK = false
+    ENABLE_VERSION_CHECK = false,
+    USE_DIRECT_URLS = true  -- Skip encrypted URLs, use direct URLs from modulePaths
 }
 
 -- ============================================
@@ -257,15 +258,24 @@ function SecurityLoader.LoadModule(moduleName)
     
     local url = nil
     
-    -- Try encrypted URL first
-    local encrypted = encryptedURLs[moduleName]
-    if encrypted then
-        url = decrypt(encrypted, SECRET_KEY)
-    end
-    
-    -- Fallback to direct URL from modulePaths
-    if not url and modulePaths[moduleName] then
+    -- Use direct URLs if enabled (recommended for new repository)
+    if CONFIG.USE_DIRECT_URLS and modulePaths[moduleName] then
         url = BASE_URL .. modulePaths[moduleName]
+    else
+        -- Try encrypted URL first (skip if invalid domain)
+        local encrypted = encryptedURLs[moduleName]
+        if encrypted then
+            local decrypted = decrypt(encrypted, SECRET_KEY)
+            -- Only use encrypted URL if it passes domain validation
+            if decrypted and validateDomain(decrypted) then
+                url = decrypted
+            end
+        end
+        
+        -- Fallback to direct URL from modulePaths (always valid)
+        if not url and modulePaths[moduleName] then
+            url = BASE_URL .. modulePaths[moduleName]
+        end
     end
     
     if not url then
@@ -273,7 +283,11 @@ function SecurityLoader.LoadModule(moduleName)
         return nil
     end
     
+    -- Final validation (should always pass for BASE_URL)
     if not validateDomain(url) then
+        warn("🚫 Security: Invalid domain for module:", moduleName)
+        warn("   URL:", url)
+        warn("   Expected domain:", CONFIG.ALLOWED_DOMAIN)
         return nil
     end
     
