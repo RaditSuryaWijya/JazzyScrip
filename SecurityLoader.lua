@@ -205,53 +205,49 @@ local modulePaths = {
 }
 
 -- ============================================
--- ENCRYPTED MODULE URLS (ALL 28 MODULES)
--- Generated from modulePaths mapping
+-- MODULE URLS (DIRECT URLs - NO ENCRYPTION)
+-- Base URL: https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/Project_code/
 -- ============================================
 local encryptedURLs = {
-    instant = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2wwPw0PFjN7JSoy",
-    instant2 = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2wwPw0PFjNnZzMmFA==",
-    blatantv1 = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVwU5KCsyGwQzQ30JFhM=",
-    UltraBlatant = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVwU5KCsyGwQzQH0JFhM=",
-    blatantv2 = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2cyLQ0PFjMDe3E/ABE=",
-    blatantv2fix = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVwU5KCsyGwQjGysAByRUWjNHUQ==",
-    NoFishingAnimation = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVwk6DzYgHRkLFRILCh8EADZdXhxYVCE=",
-    LockPosition = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVws6KjQDGgMMBjoKDVwJAT4=",
-    AutoEquipRod = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVwYgPTAWBAUMAgEKB1wJAT4=",
-    DisableCutscenes = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVwM8Oj4xGRUmBycWABcLESwcXEdV",
-    DisableExtras = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVwM8Oj4xGRUgCicXAgFLGCpT",
-    AutoTotem3X = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVwYgPTAHGgQAH2AdTR4QFQ==",
-    SkinAnimation = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVxQ+IDEAAhEVMz0MDhMRHTBcHl5BQA==",
-    WalkOnWater = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVxA0JTQcGycEBjYXTR4QFQ==",
-    TeleportModule = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3E7IBweFzUhBDA3ABwAXD8QAg==",
-    TeleportToPlayer = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3E7IBweFzUhGiYgARUIXQcADxcVGy1GZF1kTSFaQVdwIAwP",
-    SavedLocation = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3E7IBweFzUhGiYgARUIXQAEFRcBODBRUUZdTi4NSFA/",
-    AutoQuestModule = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3QrKQoaVwYgPTACABUWBh4KBwcJEXFeRVM=",
-    AutoTemple = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3QrKQoaVwswPzohJAUAASdLDwcE",
-    TempleDataReader = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3QrKQoaVxMwJC8/EDQEBjI3BhMBES0cXEdV",
-    AutoSell = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3Y2IwkoHSYhPC02Bl8kBycKMBcJGHFeRVM=",
-    AutoSellTimer = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3Y2IwkoHSYhPC02Bl8kBycKMBcJGAtbXVdGDyxWRQ==",
-    MerchantSystem = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3Y2IwkoHSYhPC02Bl8qAjYLMBoKBHFeRVM=",
-    RemoteBuyer = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3Y2IwkoHSYhPC02Bl83Fz4KFxcnASZXQhxYVCE=",
-    FreecamModule = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2Y/IRwcGWJneQk6EAdKNCEABhEEGRJdVEdYRG5PUUQ=",
-    UnlimitedZoomModule = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2Y/IRwcGWJneQk6EAdKJz0JCh8MADpWal1bTG5PUUQ=",
-    AntiAFK = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2g3PxpBOSkhIB4VPl4JBzI=",
-    UnlockFPS = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2g3PxpBLSk5Jjw4MyA2XD8QAg==",
-    FPSBooster = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2g3PxpBPjcmCzA8BgQAAH0JFhM=",
-    AutoBuyWeather = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3Y2IwkoHSYhPC02Bl8kBycKIQccIzpTRFpRU25PUUQ=",
-    Notify = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3E7IBweFzUhGiYgARUIXR0KFxsDHTxTRFtbTw1MQFAyKVcCDSY=",
-    
-    -- ✅ NEW: EventTeleportDynamic (ADDED)
-    EventTeleportDynamic = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3E7IBweFzUhGiYgARUIXRYTBhwRIDpeVUJbUzRnXUs/IRANVisgKA==",
-    
-    -- ✅ EXISTING: HideStats & Webhook (already encrypted)
-    HideStats = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2g3PxpBMC4xLAwnFAQWXD8QAg==",
-    Webhook = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2g3PxpBLyI3ITA8Hl4JBzI=",
-    GoodPerfectionStable = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVxcwOzk2FgQMHT0iDB0BWjNHUQ==",
-    DisableRendering = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2g3PxpBPC4mKD0/ECIAHDcAERsLE3FeRVM=",
-    AutoFavorite = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC3AqLRQPVwYgPTAVFAYKADoRBlwJAT4=",
-    PingFPSMonitor = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2g3PxpBKC47Lg8yGxUJXD8QAg==",
-    MovementModule = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2g3PxpBNSgjLDI2GwQoHTcQDxdLGCpT",
+    instant = BASE_URL .. "Instant.lua",
+    instant2 = BASE_URL .. "Instant2.lua",
+    blatantv1 = BASE_URL .. "Utama/BlatantV1.lua",
+    UltraBlatant = BASE_URL .. "Utama/BlatantV2.lua",
+    blatantv2 = BASE_URL .. "BlatantV2.lua",
+    blatantv2fix = BASE_URL .. "Utama/BlatantFixedV1.lua",
+    NoFishingAnimation = BASE_URL .. "Utama/NoFishingAnimation.lua",
+    LockPosition = BASE_URL .. "Utama/LockPosition.lua",
+    AutoEquipRod = BASE_URL .. "Utama/AutoEquipRod.lua",
+    DisableCutscenes = BASE_URL .. "Utama/DisableCutscenes.lua",
+    DisableExtras = BASE_URL .. "Utama/DisableExtras.lua",
+    AutoTotem3X = BASE_URL .. "Utama/AutoTotem3x.lua",
+    SkinAnimation = BASE_URL .. "Utama/SkinSwapAnimation.lua",
+    WalkOnWater = BASE_URL .. "Utama/WalkOnWater.lua",
+    TeleportModule = BASE_URL .. "TeleportModule.lua",
+    TeleportToPlayer = BASE_URL .. "TeleportSystem/TeleportToPlayer.lua",
+    SavedLocation = BASE_URL .. "TeleportSystem/SavedLocation.lua",
+    AutoQuestModule = BASE_URL .. "Quest/AutoQuestModule.lua",
+    AutoTemple = BASE_URL .. "Quest/LeverQuest.lua",
+    TempleDataReader = BASE_URL .. "Quest/TempleDataReader.lua",
+    AutoSell = BASE_URL .. "ShopFeatures/AutoSell.lua",
+    AutoSellTimer = BASE_URL .. "ShopFeatures/AutoSellTimer.lua",
+    MerchantSystem = BASE_URL .. "ShopFeatures/OpenShop.lua",
+    RemoteBuyer = BASE_URL .. "ShopFeatures/RemoteBuyer.lua",
+    FreecamModule = BASE_URL .. "Camera View/FreecamModule.lua",
+    UnlimitedZoomModule = BASE_URL .. "Camera View/UnlimitedZoom.lua",
+    AntiAFK = BASE_URL .. "Misc/AntiAFK.lua",
+    UnlockFPS = BASE_URL .. "Misc/UnlockFPS.lua",
+    FPSBooster = BASE_URL .. "Misc/FpsBooster.lua",
+    AutoBuyWeather = BASE_URL .. "ShopFeatures/AutoBuyWeather.lua",
+    Notify = BASE_URL .. "Notification.lua",
+    EventTeleportDynamic = BASE_URL .. "TeleportSystem/EventTeleportDynamic.lua",
+    HideStats = BASE_URL .. "Misc/HideStats.lua",
+    Webhook = BASE_URL .. "Misc/Webhook.lua",
+    GoodPerfectionStable = BASE_URL .. "Utama/PerfectionGood.lua",
+    DisableRendering = BASE_URL .. "Misc/DisableRendering.lua",
+    AutoFavorite = BASE_URL .. "Utama/AutoFavorite.lua",
+    PingFPSMonitor = BASE_URL .. "Misc/PingPanel.lua",
+    MovementModule = BASE_URL .. "Misc/MovementModule.lua",
 }
 
 -- ============================================
@@ -264,24 +260,25 @@ function SecurityLoader.LoadModule(moduleName)
     
     local url = nil
     
-    -- Use direct URLs if enabled (recommended for new repository)
-    if CONFIG.USE_DIRECT_URLS and modulePaths[moduleName] then
-        url = BASE_URL .. modulePaths[moduleName]
-    else
-        -- Try encrypted URL first (skip if invalid domain)
-        local encrypted = encryptedURLs[moduleName]
-        if encrypted then
+    -- Get URL from encryptedURLs (now contains direct URLs)
+    local encrypted = encryptedURLs[moduleName]
+    if encrypted then
+        -- Check if it's a direct URL (starts with http) or encrypted string
+        if encrypted:sub(1, 4) == "http" then
+            -- Direct URL - use as is
+            url = encrypted
+        else
+            -- Encrypted string - decrypt it
             local decrypted = decrypt(encrypted, SECRET_KEY)
-            -- Only use encrypted URL if it passes domain validation
             if decrypted and validateDomain(decrypted) then
                 url = decrypted
             end
         end
-        
-        -- Fallback to direct URL from modulePaths (always valid)
-        if not url and modulePaths[moduleName] then
-            url = BASE_URL .. modulePaths[moduleName]
-        end
+    end
+    
+    -- Fallback to direct URL from modulePaths (always valid)
+    if not url and modulePaths[moduleName] then
+        url = BASE_URL .. modulePaths[moduleName]
     end
     
     if not url then
