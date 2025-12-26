@@ -1,0 +1,154 @@
+# Project Intelligence - Tugas_Kuliah
+
+## Project Overview
+Roblox Lua scripting project untuk automation game dengan fokus pada auto fishing, quest automation, shop management, dan teleport system.
+
+## Key Patterns & Preferences
+
+### Code Style
+- **Language**: Roblox Lua (Lua 5.1 variant)
+- **Module Pattern**: Setiap modul return table dengan functions
+- **State Management**: Explicit Enabled flags dan Settings objects
+- **Error Handling**: Gunakan pcall() untuk protected calls
+- **Logging**: Print dengan prefix untuk identifikasi (e.g., "[⚡Fishing]")
+
+### Architecture Patterns
+1. **SecurityLoader Pattern**: 
+   - Centralized module loading dengan encryption
+   - Rate limiting dan domain validation
+   - Anti-dump protection
+
+2. **Module Structure**:
+   ```lua
+   local ModuleName = {}
+   ModuleName.Enabled = false
+   ModuleName.Settings = { ... }
+   -- Functions
+   return ModuleName
+   ```
+
+3. **Network Pattern**:
+   - WaitForChild untuk network folder
+   - sleitnick_net library structure
+   - Event-driven dengan OnClientEvent
+
+4. **Performance**:
+   - task.spawn() untuk non-blocking
+   - task.wait() untuk delays
+   - Minimal blocking operations
+
+### File Organization
+- **Root**: SecurityLoader.lua, GUI files, test files
+- **Project_code/**: Organized modules by category
+  - Utama/: Core fishing and movement modules
+  - Quest/: Quest automation
+  - ShopFeatures/: Shop automation
+  - TeleportSystem/: Teleport features
+  - Camera View/: Camera modules
+  - Misc/: Utility modules
+
+### Naming Conventions
+- **Modules**: PascalCase (e.g., BlatantAutoFishing)
+- **Functions**: camelCase (e.g., LoadModule)
+- **Settings**: PascalCase keys (e.g., FishingDelay)
+- **Constants**: UPPER_SNAKE_CASE (e.g., CONFIG, SECRET_KEY)
+
+### Security Considerations
+- Always use encryption untuk module URLs
+- Implement rate limiting
+- Validate domains
+- Use anti-dump protection
+- Never hardcode sensitive data
+
+### Performance Best Practices
+- Use task.spawn() untuk async operations
+- Implement timeout handlers
+- Clean up connections on stop
+- Monitor memory usage
+- Use efficient delay values
+
+### Common Patterns
+
+#### Auto Fishing Pattern
+```lua
+Start() → Cast() → Wait Hook → Complete → Cancel → Repeat
+         ↓
+    Timeout Handler
+```
+
+#### Event Handler Pattern
+```lua
+RE_Event.OnClientEvent:Connect(function(...)
+    if Module.Enabled then
+        task.spawn(function()
+            -- Handle event
+        end)
+    end
+end)
+```
+
+#### Module Loading Pattern
+```lua
+local module = SecurityLoader.LoadModule("moduleName")
+if module then
+    -- Use module
+end
+```
+
+## Known Challenges
+
+### Memory Leaks
+- Ada beberapa fix files: MemLeakFix.lua, NewFixMem.lua
+- Perlu explicit cleanup pada connections
+- Monitor _G usage
+
+### Performance
+- Multiple GUI files mungkin perlu konsolidasi
+- Delay values perlu tuning untuk optimal performance
+- FPS optimization dengan FpsBooster, UnlockFPS
+
+### Security
+- Encryption perlu maintenance jika URLs berubah
+- Rate limiting perlu monitoring
+- Anti-dump compatibility dengan berbagai executor
+
+## Development Workflow
+
+### Adding New Modules
+1. Create module file di Project_code/ sesuai kategori
+2. Follow module pattern structure
+3. Add encrypted URL ke SecurityLoader.lua
+4. Test dengan GUI atau direct call
+
+### Modifying Existing Modules
+1. Update module file
+2. Update encrypted URL jika perlu
+3. Test thoroughly
+4. Update version jika major change
+
+### GUI Development
+1. Follow existing GUI patterns
+2. Control modules via _G atau direct calls
+3. Implement toggle on/off
+4. Add visual feedback
+
+## Important Notes
+- **Executor**: Lynx (dari SecurityLoader context)
+- **Network Library**: sleitnick_net di ReplicatedStorage
+- **Total Modules**: 28 (dari SecurityLoader)
+- **License**: MIT
+- **Response Language**: Indonesian (dari user rules)
+
+## Anti-Patterns to Avoid
+- ❌ Global pollution tanpa namespace
+- ❌ Blocking operations tanpa task.spawn()
+- ❌ Hardcoded values tanpa CONFIG
+- ❌ No error handling
+- ❌ Memory leaks dari connections yang tidak di-cleanup
+
+## Extension Points
+- New modules: Add to SecurityLoader encryptedURLs
+- New GUI: Follow existing GUI patterns
+- New features: Follow module pattern
+- Security enhancements: Extend SecurityLoader
+
