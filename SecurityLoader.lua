@@ -1,5 +1,8 @@
--- [[ UPDATED SECURITY LOADER: HYBRID FIX ]]
--- Fix: TeleportModule Coordinates & URL Routing
+-- [[ SECURITY LOADER: FINAL FIX (BOM REMOVAL & SMART VALIDATION) ]]
+-- Fixes:
+-- 1. U+feff Syntax Error (BOM Removal)
+-- 2. False Positive "404" error on Vector3 coordinates
+-- 3. HTML Error Page handling
 
 local SecurityLoader = {}
 
@@ -7,7 +10,7 @@ local SecurityLoader = {}
 -- CONFIGURATION
 -- ============================================
 local CONFIG = {
-    VERSION = "2.3.2-Hybrid",
+    VERSION = "2.3.3-FinalFix",
     ALLOWED_DOMAIN = "raw.githubusercontent.com",
     MAX_LOADS_PER_SESSION = 100,
     ENABLE_RATE_LIMITING = true,
@@ -16,9 +19,8 @@ local CONFIG = {
 }
 
 -- ============================================
--- BASE URL (KEMBALI KE VERSI ASLI KAMU)
+-- BASE URL (DEFAULT)
 -- ============================================
--- Kita pakai link lama agar script lain tetap jalan
 local BASE_URL = "https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/Project_code/"
 
 -- ============================================
@@ -67,7 +69,7 @@ local modulePaths = {
 }
 
 -- ============================================
--- RATE LIMITING UTILS
+-- RATE LIMITING
 -- ============================================
 local loadCounts = {}
 local lastLoadTime = {}
@@ -101,17 +103,13 @@ function SecurityLoader.LoadModule(moduleName)
         return nil
     end
 
-    -- 1. Gunakan BASE_URL default (refs/heads/main)
+    -- 1. Construct URL
     local finalURL = BASE_URL .. path
 
-    -- [[ HYBRID FIX: KHUSUS TELEPORT MODULE ]]
-    -- Jika modul adalah Teleport atau Event, kita PAKSA hapus 'refs/heads/' 
-    -- agar mendapatkan RAW TEXT yang benar dan menghindari error HTML.
-    if moduleName == "TeleportModule" or moduleName == "EventTeleportDynamic" then
-        finalURL = finalURL:gsub("refs/heads/", "")
-        -- Debug print untuk memastikan link benar
-        print("🔧 Auto-Fix URL for " .. moduleName .. ": " .. finalURL)
-    end
+    -- [[ AUTO-FIX URL ]]
+    -- Hapus 'refs/heads/' secara otomatis untuk menghindari error HTML 404
+    -- Ini aman dilakukan untuk semua modul di Raw GitHub
+    finalURL = finalURL:gsub("refs/heads/", "")
 
     local success, result = pcall(function()
         -- Request Script
@@ -121,12 +119,19 @@ function SecurityLoader.LoadModule(moduleName)
             error("Empty content received")
         end
         
-        -- [[ VALIDATION FIX ]]
-        -- Hanya error jika ada tag HTML, JANGAN cek angka "404" (karena koordinat ada yg pakai angka 404)
+        -- [[ FIX 1: BOM REMOVAL (U+feff Error Fix) ]]
+        -- Membersihkan karakter sampah di awal file
+        if scriptContent:sub(1, 3) == "\239\187\191" then
+            scriptContent = scriptContent:sub(4)
+        end
+        
+        -- [[ FIX 2: SMART VALIDATION (TeleportModule Fix) ]]
+        -- Kita HAPUS pengecekan "404" yang menyebabkan False Positive pada koordinat
+        -- Kita ganti dengan pengecekan tag HTML yang spesifik di awal file
         if scriptContent:find("^%s*<!DOCTYPE") or scriptContent:find("^%s*<html") then
              local preview = scriptContent:sub(1, 100)
              warn("⚠️ HTML Detected in " .. moduleName .. ":\n" .. preview)
-             error("HTML Error Page Received (Wrong Link)")
+             error("HTML Error Page Received (Invalid URL)")
         end
 
         -- Execute
@@ -140,7 +145,7 @@ function SecurityLoader.LoadModule(moduleName)
     
     if not success then
         warn("❌ Failed to load", moduleName)
-        warn("   URL:", finalURL)
+        -- warn("   URL:", finalURL) -- Uncomment untuk debug URL
         warn("   Error:", result)
         return nil
     end
@@ -157,8 +162,8 @@ end
 
 print("━━━━━━━━━━━━━━━━━━━━━━")
 print("🔒 Jazzy Security Loader v" .. CONFIG.VERSION)
-print("✅ Hybrid URL Routing Active")
-print("✅ Coordinate Validation Fix Applied")
+print("✅ BOM Removal Active (U+feff Fix)")
+print("✅ Smart Validation Active (Coordinate Safe)")
 print("━━━━━━━━━━━━━━━━━━━━━━")
 
 return SecurityLoader
