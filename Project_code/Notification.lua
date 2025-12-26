@@ -1,4 +1,4 @@
--- Notification.lua
+﻿-- Notification.lua
 -- Simple notification (bottom-right) for exploit environments.
 
 local Notify = {}
@@ -9,7 +9,7 @@ local LocalPlayer = Players.LocalPlayer
 
 -- Parent ke PlayerGui AGAR TIDAK TERBLOCK EXECUTOR
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "LynxNotifications"
+ScreenGui.Name = "JazzyNotifications"
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")

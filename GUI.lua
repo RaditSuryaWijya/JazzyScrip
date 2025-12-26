@@ -1,4 +1,4 @@
--- LynxGUI_v2.3.lua - Galaxy Edition (REFINED)
+﻿-- JazzyGUI_v2.3.lua - Galaxy Edition (REFINED)
 -- BAGIAN 1: Setup, Core Functions, Window Structure
 -- FREE NOT FOR SALE
 
@@ -26,7 +26,7 @@ local function new(class, props)
 end
 
 -- Load Security Loader (upload SecurityLoader.lua to GitHub first)
-local SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/akmiliadevi/Tugas_Kuliah/refs/heads/main/SecurityLoader.lua"))()
+local SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/SecurityLoader.lua"))()
 
 -- Load all modules (replace all your loadstring calls)
 local instant = SecurityLoader.LoadModule("instant")
@@ -67,7 +67,7 @@ print("✅ All modules loaded securely!")
 
 -- Galaxy Color Palette
 local colors = {
-    primary = Color3.fromRGB(255, 140, 0),       -- Purple
+    primary = Color3.fromRGB(33, 150, 243),       -- Purple
     secondary = Color3.fromRGB(147, 112, 219),    -- Medium purple
     accent = Color3.fromRGB(186, 85, 211),        -- Orchid
     galaxy1 = Color3.fromRGB(123, 104, 238),      -- Medium slate blue
@@ -98,7 +98,7 @@ local maxWindowSize = Vector2.new(550, 400)
 local sidebarWidth = 140
 
 local gui = new("ScreenGui",{
-    Name="LynxGUI_Galaxy",
+    Name="JazzyGUI_Galaxy",
     Parent=localPlayer.PlayerGui,
     IgnoreGuiInset=true,
     ResetOnSpawn=false,
@@ -221,7 +221,7 @@ new("UIStroke",{
 -- Title with glow effect
 local titleLabel = new("TextLabel",{
     Parent=scriptHeader,
-    Text="LynX",
+    Text="Jazzy",
     Size=UDim2.new(0, 80, 1, 0),
     Position=UDim2.new(0, 15, 0, 0),
     BackgroundTransparency=1,
@@ -237,7 +237,7 @@ local titleLabel = new("TextLabel",{
 -- Title glow effect
 local titleGlow = new("TextLabel",{
     Parent=scriptHeader,
-    Text="LynX",
+    Text="Jazzy",
     Size=titleLabel.Size,
     Position=titleLabel.Position,
     BackgroundTransparency=1,
@@ -520,7 +520,7 @@ local settingsPage = createPage("Settings")
 local infoPage = createPage("Info")
 mainPage.Visible = true
 
--- LynxGUI_v2.3.lua - Galaxy Edition (REFINED)
+-- JazzyGUI_v2.3.lua - Galaxy Edition (REFINED)
 -- BAGIAN 2: Navigation, UI Components (Toggle, Input Horizontal, Dropdown, Button, Category)
 
 -- Nav Button - PADDING DIPERBAIKI, lebih transparan
@@ -662,7 +662,7 @@ btnShop.MouseButton1Click:Connect(function() switchPage("Shop", "Shop Features")
 btnWebhook.MouseButton1Click:Connect(function() switchPage("Webhook", "Webhook Page") end)
 btnCameraView.MouseButton1Click:Connect(function() switchPage("CameraView", "Camera View Settings") end)
 btnSettings.MouseButton1Click:Connect(function() switchPage("Settings", "Settings") end)
-btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Lynx") end)
+btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Jazzy") end)
 
 -- ==== UI COMPONENTS - SEMUA DIPERBAIKI ALIGNMENT ====
 
@@ -1141,7 +1141,7 @@ local function makeButton(parent, label, callback)
     return btnFrame
 end
 
--- LynxGUI_v2.3.lua - Galaxy Edition (REFINED)
+-- JazzyGUI_v2.3.lua - Galaxy Edition (REFINED)
 -- BAGIAN 3 (FINAL): Features, Pages Content, Minimize System, Animations
 
 -- ==== MAIN PAGE ====
@@ -2247,7 +2247,7 @@ makeToggle(catZoom, "Enable Unlimited Zoom", function(on)
     end
 end)
 
-FreecamModule.SetMainGuiName("LynxGUI_Galaxy")
+FreecamModule.SetMainGuiName("JazzyGUI_Galaxy")
 
 local catFreecam = makeCategory(cameraViewPage, "Freecam Camera", "📷")
 
@@ -2494,7 +2494,7 @@ makeToggle(catHideStats, "⚡ Enable Hide Stats", function(on)
     
     if on then
         HideStats.Enable()
-        Notify.Send("Hide Stats ✨", "Hide Stats aktif! '-LynX-' berkilau di atas nama.", 3)
+        Notify.Send("Hide Stats ✨", "Hide Stats aktif! '-Jazzy-' berkilau di atas nama.", 3)
     else
         HideStats.Disable()
         Notify.Send("Hide Stats", "Hide Stats dimatikan.", 3)
@@ -3327,10 +3327,10 @@ makeButton(catWebhook, "Test Webhook Connection", function()
         local testPayload = {
             embeds = {{
                 title = "🎣 Webhook Test Successful!",
-                description = "Your Discord webhook is working correctly!\n\nLynxx GUI is ready to send fish notifications." .. filterText,
+                description = "Your Discord webhook is working correctly!\n\nJazzyx GUI is ready to send fish notifications." .. filterText,
                 color = 3447003,
                 footer = {
-                    text = "Lynxx Webhook Test • " .. os.date("%m/%d/%Y %H:%M"),
+                    text = "Jazzyx Webhook Test • " .. os.date("%m/%d/%Y %H:%M"),
                     icon_url = "https://i.imgur.com/shnNZuT.png"
                 },
                 timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
@@ -3437,7 +3437,7 @@ local infoText = new("TextLabel",{
     Position=UDim2.new(0, 12, 0, 12),
     BackgroundTransparency=1,
     Text=[[
-# LynX v2.3 
+# Jazzy v2.3 
 Free Not For Sale
 ━━━━━━━━━━━━━━━━━━━━━━
 ━━━━━━━━━━━━━━━━━━━━━━
@@ -3654,8 +3654,8 @@ task.spawn(function()
 end)
 
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("✨ Lynx GUI v2.3 ")
+print("✨ Jazzy GUI v2.3 ")
 print("FREE NOT FOR SALE")
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("💎 Created by Lynx Team")
+print("💎 Created by Jazzy Team")
 print("━━━━━━━━━━━━━━━━━━━━━━")

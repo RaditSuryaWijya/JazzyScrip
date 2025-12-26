@@ -1,6 +1,6 @@
--- =====================================================
+﻿-- =====================================================
 -- DISABLE 3D RENDERING MODULE (CLEAN VERSION)
--- For integration with Lynx GUI v2.3
+-- For integration with Jazzy GUI v2.3
 -- =====================================================
 
 local DisableRendering = {}

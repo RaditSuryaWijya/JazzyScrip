@@ -62,7 +62,7 @@
 - GUIIIFIXX.lua
 - GuiJam1.lua
 - GuiJam2pagi.lua
-- LynxGUITest.lua
+- JazzyGUITest.lua
 
 ### Performance Optimizations
 ✅ Memory Leak Fixes:

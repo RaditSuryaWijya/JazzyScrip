@@ -1,4 +1,4 @@
-local WebhookModule = {}
+﻿local WebhookModule = {}
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -270,7 +270,7 @@ local function send(fish, meta, extra)
     local payload = {
         embeds = {{
             author = {
-                name = "Lynxx Webhook | Fish Caught"
+                name = "Jazzyx Webhook | Fish Caught"
             },
             description = congratsMsg,
             color = color,
@@ -279,7 +279,7 @@ local function send(fish, meta, extra)
                 url = imageUrl
             },
             footer = {
-                text = "Lynxx Webhook • " .. os.date("%m/%d/%Y %H:%M"),
+                text = "Jazzyx Webhook • " .. os.date("%m/%d/%Y %H:%M"),
                 icon_url = "https://i.imgur.com/shnNZuT.png"
             },
             timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")

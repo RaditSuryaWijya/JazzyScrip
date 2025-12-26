@@ -1,4 +1,4 @@
--- Lynx Panel - Ping & FPS Monitor
+﻿-- Jazzy Panel - Ping & FPS Monitor
 -- Script untuk monitoring ping dan FPS real-time
 -- Styled seperti CHLOE X PANEL
 
@@ -23,7 +23,7 @@ local pingUpdateConnection
 local function createMonitorGUI()
     -- Main ScreenGui
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "LynxPanelMonitor"
+    screenGui.Name = "JazzyPanelMonitor"
     screenGui.ResetOnSpawn = false
     screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     screenGui.DisplayOrder = 10
@@ -42,9 +42,9 @@ local function createMonitorGUI()
     containerCorner.CornerRadius = UDim.new(0, 10)
     containerCorner.Parent = container
     
-    -- Stroke untuk border dengan orange accent
+    -- Stroke untuk border dengan blue accent
     local containerStroke = Instance.new("UIStroke")
-    containerStroke.Color = Color3.fromRGB(255, 140, 50)
+    containerStroke.Color = Color3.fromRGB(59, 130, 246)
     containerStroke.Thickness = 1.5
     containerStroke.Transparency = 0.5
     containerStroke.Parent = container
@@ -62,7 +62,7 @@ local function createMonitorGUI()
     logoIcon.Size = UDim2.new(0, 24, 0, 24)
     logoIcon.Position = UDim2.new(0, 8, 0, 5)
     logoIcon.BackgroundTransparency = 1
-    logoIcon.Image = "rbxassetid://118176705805619" -- Logo Lynx
+    logoIcon.Image = "rbxassetid://118176705805619" -- Logo Jazzy
     logoIcon.ScaleType = Enum.ScaleType.Fit
     logoIcon.Parent = header
     
@@ -77,7 +77,7 @@ local function createMonitorGUI()
     titleLabel.Size = UDim2.new(1, -40, 1, 0)
     titleLabel.Position = UDim2.new(0, 36, 0, 0)
     titleLabel.BackgroundTransparency = 1
-    titleLabel.Text = "LYNX PANEL"
+    titleLabel.Text = "Jazzy PANEL"
     titleLabel.TextColor3 = Color3.fromRGB(255, 140, 50) -- Orange
     titleLabel.TextSize = 13
     titleLabel.Font = Enum.Font.GothamBold
@@ -109,7 +109,7 @@ local function createMonitorGUI()
     pingLabel.Position = UDim2.new(0, 0, 0, 0)
     pingLabel.BackgroundTransparency = 1
     pingLabel.Text = "Ping: 0 ms"
-    pingLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+    pingLabel.TextColor3 = Color3.fromRGB(147, 197, 253)
     pingLabel.TextSize = 13
     pingLabel.Font = Enum.Font.GothamBold
     pingLabel.TextXAlignment = Enum.TextXAlignment.Center
@@ -238,7 +238,7 @@ local function updatePingColor(pingLabel, value)
     if ping <= 50 then
         pingLabel.TextColor3 = Color3.fromRGB(100, 255, 150)
     elseif ping <= 100 then
-        pingLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+        pingLabel.TextColor3 = Color3.fromRGB(147, 197, 253)
     elseif ping <= 150 then
         pingLabel.TextColor3 = Color3.fromRGB(255, 150, 100)
     else
@@ -251,7 +251,7 @@ local function updateFPSColor(fpsLabel, value)
     if fps >= 55 then
         fpsLabel.TextColor3 = Color3.fromRGB(100, 255, 150)
     elseif fps >= 40 then
-        fpsLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+        fpsLabel.TextColor3 = Color3.fromRGB(147, 197, 253)
     elseif fps >= 25 then
         fpsLabel.TextColor3 = Color3.fromRGB(255, 150, 100)
     else
@@ -266,7 +266,7 @@ function MonitorModule:Show()
         return
     end
     
-    print("🚀 Starting Lynx Panel Monitor...")
+    print("🚀 Starting Jazzy Panel Monitor...")
     
     self.GUI = createMonitorGUI()
     
@@ -303,7 +303,7 @@ function MonitorModule:Show()
         end
     end)
     
-    print("✅ Lynx Panel Monitor loaded!")
+    print("✅ Jazzy Panel Monitor loaded!")
 end
 
 -- Fungsi untuk hide panel
@@ -340,7 +340,7 @@ function MonitorModule:Destroy()
     end
     
     fpsHistory = {}
-    print("✅ Lynx Monitor destroyed")
+    print("✅ Jazzy Monitor destroyed")
 end
 
 -- Fungsi untuk set custom logo

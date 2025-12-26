@@ -1,5 +1,5 @@
 -- ConfigSystem.lua
--- Auto Save/Load Configuration System for Lynx GUI
+-- Auto Save/Load Configuration System for Jazzy GUI
 -- FREE NOT FOR SALE
 
 local HttpService = game:GetService("HttpService")
@@ -10,8 +10,8 @@ ConfigSystem.Version = "1.0"
 -- ============================================
 -- CONFIG SETTINGS
 -- ============================================
-local CONFIG_FOLDER = "LynxGUI_Configs"
-local CONFIG_FILE = CONFIG_FOLDER .. "/lynx_config.json"
+local CONFIG_FOLDER = "JazzyGUI_Configs"
+local CONFIG_FILE = CONFIG_FOLDER .. "/jazzy_config.json"
 
 -- ============================================
 -- DEFAULT CONFIG STRUCTURE

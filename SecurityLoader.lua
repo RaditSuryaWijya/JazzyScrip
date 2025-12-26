@@ -20,7 +20,7 @@ local CONFIG = {
 -- ============================================
 local SECRET_KEY = (function()
     local parts = {
-        string.char(76, 121, 110, 120),
+        string.char(74, 97, 122, 122, 121),
         string.char(71, 85, 73, 95),
         "SuperSecret_",
         tostring(2024),
@@ -111,7 +111,95 @@ local function validateDomain(url)
 end
 
 -- ============================================
+-- ENCRYPTION HELPER FUNCTION
+-- ============================================
+local function encrypt(url, key)
+    local result = {}
+    for i = 1, #url do
+        local byte = string.byte(url, i)
+        local keyByte = string.byte(key, ((i - 1) % #key) + 1)
+        table.insert(result, string.char(bit32.bxor(byte, keyByte)))
+    end
+    
+    local encoded = ""
+    local b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+    local binary = ""
+    
+    for i = 1, #result do
+        local byte = string.byte(result, i)
+        for j = 8, 1, -1 do
+            binary = binary .. ((byte % 2^j - byte % 2^(j-1) >= 0) and "1" or "0")
+        end
+    end
+    
+    for i = 1, #binary, 6 do
+        local chunk = binary:sub(i, i + 5)
+        local num = 0
+        for j = 1, #chunk do
+            num = num + (chunk:sub(j, j) == "1" and 2^(#chunk - j) or 0)
+        end
+        encoded = encoded .. b64:sub(num + 1, num + 1)
+    end
+    
+    local padding = (3 - (#result % 3)) % 3
+    for i = 1, padding do
+        encoded = encoded .. "="
+    end
+    
+    return encoded
+end
+
+-- ============================================
+-- MODULE PATH MAPPING
+-- Base URL: https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/Project_code/
+-- ============================================
+local BASE_URL = "https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/Project_code/"
+
+local modulePaths = {
+    instant = "Instant.lua",
+    instant2 = "Instant2.lua",
+    blatantv1 = "Utama/BlatantV1.lua",
+    UltraBlatant = "Utama/BlatantV2.lua",
+    blatantv2 = "BlatantV2.lua",
+    blatantv2fix = "Utama/BlatantFixedV1.lua",
+    NoFishingAnimation = "Utama/NoFishingAnimation.lua",
+    LockPosition = "Utama/LockPosition.lua",
+    AutoEquipRod = "Utama/AutoEquipRod.lua",
+    DisableCutscenes = "Utama/DisableCutscenes.lua",
+    DisableExtras = "Utama/DisableExtras.lua",
+    AutoTotem3X = "Utama/AutoTotem3x.lua",
+    SkinAnimation = "Utama/SkinSwapAnimation.lua",
+    WalkOnWater = "Utama/WalkOnWater.lua",
+    TeleportModule = "TeleportModule.lua",
+    TeleportToPlayer = "TeleportSystem/TeleportToPlayer.lua",
+    SavedLocation = "TeleportSystem/SavedLocation.lua",
+    AutoQuestModule = "Quest/AutoQuestModule.lua",
+    AutoTemple = "Quest/LeverQuest.lua",
+    TempleDataReader = "Quest/TempleDataReader.lua",
+    AutoSell = "ShopFeatures/AutoSell.lua",
+    AutoSellTimer = "ShopFeatures/AutoSellTimer.lua",
+    MerchantSystem = "ShopFeatures/OpenShop.lua",
+    RemoteBuyer = "ShopFeatures/RemoteBuyer.lua",
+    FreecamModule = "Camera View/FreecamModule.lua",
+    UnlimitedZoomModule = "Camera View/UnlimitedZoom.lua",
+    AntiAFK = "Misc/AntiAFK.lua",
+    UnlockFPS = "Misc/UnlockFPS.lua",
+    FPSBooster = "Misc/FpsBooster.lua",
+    AutoBuyWeather = "ShopFeatures/AutoBuyWeather.lua",
+    Notify = "Notification.lua",
+    EventTeleportDynamic = "TeleportSystem/EventTeleportDynamic.lua",
+    HideStats = "Misc/HideStats.lua",
+    Webhook = "Misc/Webhook.lua",
+    GoodPerfectionStable = "Utama/PerfectionGood.lua",
+    DisableRendering = "Misc/DisableRendering.lua",
+    AutoFavorite = "Utama/AutoFavorite.lua",
+    PingFPSMonitor = "Misc/PingPanel.lua",
+    MovementModule = "Misc/MovementModule.lua",
+}
+
+-- ============================================
 -- ENCRYPTED MODULE URLS (ALL 28 MODULES)
+-- Generated from modulePaths mapping
 -- ============================================
 local encryptedURLs = {
     instant = "JA0aCDRvZnAhFAdLFToRCwcHASxXQlFbTzRGSlFwLxYDVyY+JDY/HBEBFyUMTCYQEz5Bb3lBTSlCTAosKR8dVy8wKDsgWh0EGz1KMwAKHjpRRG1XTiRGC2wwPw0PFjN7JSoy",
@@ -167,13 +255,23 @@ function SecurityLoader.LoadModule(moduleName)
         return nil
     end
     
+    local url = nil
+    
+    -- Try encrypted URL first
     local encrypted = encryptedURLs[moduleName]
-    if not encrypted then
+    if encrypted then
+        url = decrypt(encrypted, SECRET_KEY)
+    end
+    
+    -- Fallback to direct URL from modulePaths
+    if not url and modulePaths[moduleName] then
+        url = BASE_URL .. modulePaths[moduleName]
+    end
+    
+    if not url then
         warn("❌ Module not found:", moduleName)
         return nil
     end
-    
-    local url = decrypt(encrypted, SECRET_KEY)
     
     if not validateDomain(url) then
         return nil
@@ -266,7 +364,7 @@ function SecurityLoader.ResetRateLimit()
 end
 
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("🔒 Lynx Security Loader v" .. CONFIG.VERSION)
+print("🔒 Jazzy Security Loader v" .. CONFIG.VERSION)
 print("✅ Total Modules: 28 (EventTeleport added!)")
 print("✅ Rate Limiting:", CONFIG.ENABLE_RATE_LIMITING and "ENABLED" or "DISABLED")
 print("✅ Domain Check:", CONFIG.ENABLE_DOMAIN_CHECK and "ENABLED" or "DISABLED")

@@ -1,4 +1,4 @@
--- LynxGUI_v2.3_Improved.lua - ENHANCED VERSION (Part 1/6)
+﻿-- JazzyGUI_v2.3_Improved.lua - ENHANCED VERSION (Part 1/6)
 -- Core Setup, Services, Advanced Loading System with iOS-Style Notification
 -- FREE NOT FOR SALE
 
@@ -7,7 +7,7 @@ repeat task.wait() until game:IsLoaded()
 -- ============================================
 -- ANTI-DUPLICATION SYSTEM
 -- ============================================
-local GUI_IDENTIFIER = "LynxGUI_Galaxy_v2.3"
+local GUI_IDENTIFIER = "JazzyGUI_Galaxy_v2.3"
 
 -- Check for existing GUI and close it
 local function CloseExistingGUI()
@@ -15,7 +15,7 @@ local function CloseExistingGUI()
     local existingGUI = playerGui:FindFirstChild(GUI_IDENTIFIER)
     
     if existingGUI then
-        print("🔄 Existing Lynx GUI detected - Closing old instance...")
+        print("🔄 Existing Jazzy GUI detected - Closing old instance...")
         
         -- Animate out and destroy
         pcall(function()
@@ -79,7 +79,7 @@ function LoadingNotification.Create()
     pcall(function()
         -- Create iOS-style notification GUI
         local notifGui = new("ScreenGui", {
-            Name = "LynxLoadingNotification_iOS",
+            Name = "JazzyLoadingNotification_iOS",
             Parent = localPlayer.PlayerGui,
             ResetOnSpawn = false,
             ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
@@ -125,7 +125,7 @@ function LoadingNotification.Create()
             Size = UDim2.new(1, -80, 0, 24),
             Position = UDim2.new(0, 70, 0, 12),
             BackgroundTransparency = 1,
-            Text = "Lynx Script Loading",
+            Text = "Jazzy Script Loading",
             Font = Enum.Font.GothamBold,
             TextSize = 14,
             TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -206,7 +206,7 @@ function LoadingNotification.Complete(success, loadedCount, totalCount)
     
     pcall(function()
         if LoadingNotification.TitleLabel then
-            LoadingNotification.TitleLabel.Text = success and "Lynx Ready!" or "Loading Complete"
+            LoadingNotification.TitleLabel.Text = success and "Jazzy Ready!" or "Loading Complete"
         end
         
         if LoadingNotification.StatusLabel then
@@ -270,13 +270,13 @@ local CRITICAL_MODULES = {
 LoadingNotification.Create()
 
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("🔄 LYNX GUI v2.3 - LOADING")
+print("🔄 Jazzy GUI v2.3 - LOADING")
 print("━━━━━━━━━━━━━━━━━━━━━━")
 
 -- Load Security Loader
 local SecurityLoader
 local loaderSuccess, loaderError = pcall(function()
-    SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/akmiliadevi/Tugas_Kuliah/refs/heads/main/SecurityLoader.lua"))()
+    SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/SecurityLoader.lua"))()
 end)
 
 if not loaderSuccess or not SecurityLoader then
@@ -484,7 +484,7 @@ print("\n✅ All critical modules verified - Proceeding to GUI creation...\n")
 -- Load ConfigSystem module
 local ConfigSystem
 local configSuccess, configError = pcall(function()
-    ConfigSystem = loadstring(game:HttpGet("https://raw.githubusercontent.com/akmiliadevi/Tugas_Kuliah/refs/heads/main/Project_code/Misc/SaveConfig.lua"))()
+    ConfigSystem = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/Project_code/Misc/SaveConfig.lua"))()
 end)
 
 if not configSuccess or not ConfigSystem then
@@ -779,7 +779,7 @@ local configStatusText = new("TextLabel", {
 task.spawn(function()
     task.wait(1)
     if ConfigSystem and configStatusText then
-        local hasConfigFile = isfile("LynxGUI_Configs/lynx_config.json")
+        local hasConfigFile = isfile("JazzyGUI_Configs/Jazzy_config.json")
         local statusIcon = hasConfigFile and "✅" or "⚠️"
         local statusMsg = hasConfigFile and "Config file exists" or "No config saved yet"
         
@@ -811,7 +811,7 @@ print("📝 [ConfigSystem] Auto-save enabled for all settings")
 -- COLOR PALETTE
 -- ============================================
 local colors = {
-    primary = Color3.fromRGB(255, 140, 0),
+    primary = Color3.fromRGB(33, 150, 243),
     secondary = Color3.fromRGB(147, 112, 219),
     accent = Color3.fromRGB(186, 85, 211),
     galaxy1 = Color3.fromRGB(123, 104, 238),
@@ -959,7 +959,7 @@ new("UIStroke", {
 -- Title with glow
 local titleLabel = new("TextLabel", {
     Parent = scriptHeader,
-    Text = "LynX",
+    Text = "Jazzy",
     Size = UDim2.new(0, 80, 1, 0),
     Position = UDim2.new(0, 15, 0, 0),
     BackgroundTransparency = 1,
@@ -975,7 +975,7 @@ local titleLabel = new("TextLabel", {
 -- Title glow effect
 local titleGlow = new("TextLabel", {
     Parent = scriptHeader,
-    Text = "LynX",
+    Text = "Jazzy",
     Size = titleLabel.Size,
     Position = titleLabel.Position,
     BackgroundTransparency = 1,
@@ -1393,7 +1393,7 @@ btnShop.MouseButton1Click:Connect(function() switchPage("Shop", "Shop Features")
 btnWebhook.MouseButton1Click:Connect(function() switchPage("Webhook", "Webhook Page") end)
 btnCameraView.MouseButton1Click:Connect(function() switchPage("CameraView", "Camera View Settings") end)
 btnSettings.MouseButton1Click:Connect(function() switchPage("Settings", "Settings") end)
-btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Lynx") end)
+btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Jazzy") end)
 
 -- ============================================
 -- REUSABLE UI COMPONENT FUNCTIONS
@@ -3023,12 +3023,12 @@ end)
 task.spawn(function()
     task.wait(1)
     if ConfigSystem and configStatusText then
-        local hasConfigFile = isfile("LynxGUI_Configs/lynx_config.json")
+        local hasConfigFile = isfile("JazzyGUI_Configs/Jazzy_config.json")
         local statusIcon = hasConfigFile and "✅" or "⚠️"
         local statusMsg = hasConfigFile and "Config file exists" or "No config saved yet"
         
         configStatusText.Text = string.format(
-            "📦 CONFIG STATUS\n%s %s\n\n💡 Settings auto-save on change!\n📁 Folder: LynxGUI_Configs\n📄 File: lynx_config.json",
+            "📦 CONFIG STATUS\n%s %s\n\n💡 Settings auto-save on change!\n📁 Folder: JazzyGUI_Configs\n📄 File: Jazzy_config.json",
             statusIcon, statusMsg
         )
     end
@@ -3053,7 +3053,7 @@ local infoText = new("TextLabel", {
     Size = UDim2.new(1, -24, 0, 100),
     Position = UDim2.new(0, 12, 0, 12),
     BackgroundTransparency = 1,
-    Text = "# LynX v2.3 Improved\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
+    Text = "# Jazzy v2.3 Improved\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
     Font = Enum.Font.Gotham,
     TextSize = 10,
     TextColor3 = colors.text,
@@ -3374,10 +3374,10 @@ print("📝 [ConfigSystem] Auto-save enabled for all settings")
 -- FINAL SUCCESS MESSAGE
 -- ============================================
 print("\n━━━━━━━━━━━━━━━━━━━━━━")
-print("✨ Lynx GUI v2.3 IMPROVED")
+print("✨ Jazzy GUI v2.3 IMPROVED")
 print("FREE NOT FOR SALE")
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("💎 Created by Lynx Team")
+print("💎 Created by Jazzy Team")
 print("📦 Modules: " .. loadedModules .. "/" .. totalModules .. " loaded")
 
 local hideStatsOK = (HideStats ~= nil)

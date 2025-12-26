@@ -39,7 +39,7 @@ Memory Bank baru saja diinisialisasi. Proyek ini adalah kumpulan script Roblox L
 4. Apakah ada known issues yang perlu diperbaiki?
 
 ## Context for Future Work
-- Proyek menggunakan Roblox Lua dengan executor Lynx
+- Proyek menggunakan Roblox Lua dengan executor Jazzy
 - Security adalah prioritas dengan encryption dan anti-dump
 - Performance optimization penting dengan memory leak fixes
 - Modular architecture memudahkan maintenance dan extension

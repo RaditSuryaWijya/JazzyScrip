@@ -17,7 +17,7 @@
 
 ### Environment
 - **Platform**: Roblox
-- **Executor**: Lynx (dari konteks SecurityLoader)
+- **Executor**: Jazzy (dari konteks SecurityLoader)
 - **OS**: Windows (dari user info)
 
 ### File Structure
@@ -115,7 +115,7 @@ Tugas_Kuliah-main/
 
 ### Test Files
 - GUI2test.lua
-- LynxGUITest.lua
+- JazzyGUITest.lua
 - Various "test" and "fix" files
 
 ### Iteration Pattern

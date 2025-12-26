@@ -1,4 +1,4 @@
--- LynxGUI v2.3 Optimized - Part 1/8
+-- JazzyGUI v2.3 Optimized - Part 1/8
 -- Core Setup & Module Loading System
 
 repeat task.wait() until game:IsLoaded()
@@ -6,7 +6,7 @@ repeat task.wait() until game:IsLoaded()
 -- ============================================
 -- ANTI-DUPLICATION
 -- ============================================
-local GUI_IDENTIFIER = "LynxGUI_Galaxy_v2.3"
+local GUI_IDENTIFIER = "JazzyGUI_Galaxy_v2.3"
 
 local function CloseExistingGUI()
     local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
@@ -85,7 +85,7 @@ function LoadingNotification.Create()
     
     pcall(function()
         local notifGui = new("ScreenGui", {
-            Name = "LynxLoadingNotification",
+            Name = "JazzyLoadingNotification",
             Parent = localPlayer.PlayerGui,
             ResetOnSpawn = false,
             ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
@@ -117,7 +117,7 @@ function LoadingNotification.Create()
             Size = UDim2.new(1, -80, 0, 24),
             Position = UDim2.new(0, 70, 0, 12),
             BackgroundTransparency = 1,
-            Text = "Lynx Script Loading",
+            Text = "Jazzy Script Loading",
             Font = Enum.Font.GothamBold,
             TextSize = 14,
             TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -194,7 +194,7 @@ function LoadingNotification.Complete(success, loadedCount, totalCount)
     
     pcall(function()
         if LoadingNotification.TitleLabel then
-            LoadingNotification.TitleLabel.Text = success and "Lynx Ready!" or "Loading Complete"
+            LoadingNotification.TitleLabel.Text = success and "Jazzy Ready!" or "Loading Complete"
         end
         
         if LoadingNotification.StatusLabel then
@@ -239,7 +239,7 @@ local CRITICAL_MODULES = {"HideStats", "Webhook", "Notify"}
 LoadingNotification.Create()
 
 -- Load SecurityLoader
-local SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/akmiliadevi/Tugas_Kuliah/refs/heads/main/SecurityLoader.lua"))()
+local SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/SecurityLoader.lua"))()
 
 if not SecurityLoader then
     LoadingNotification.Complete(false, 0, 1)
@@ -335,7 +335,7 @@ end
 -- COLOR PALETTE
 -- ============================================
 local colors = {
-    primary = Color3.fromRGB(255, 140, 0),
+    primary = Color3.fromRGB(59, 130, 246),
     secondary = Color3.fromRGB(147, 112, 219),
     accent = Color3.fromRGB(186, 85, 211),
     success = Color3.fromRGB(34, 197, 94),
@@ -725,7 +725,7 @@ btnShop.MouseButton1Click:Connect(function() switchPage("Shop", "Shop Features")
 btnWebhook.MouseButton1Click:Connect(function() switchPage("Webhook", "Webhook Page") end)
 btnCameraView.MouseButton1Click:Connect(function() switchPage("CameraView", "Camera View Settings") end)
 btnSettings.MouseButton1Click:Connect(function() switchPage("Settings", "Settings") end)
-btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Lynx") end)
+btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Jazzy") end)
 
 -- ============================================
 -- UI COMPONENTS
@@ -1364,7 +1364,7 @@ end
 -- ============================================
 -- CONFIG SYSTEM
 -- ============================================
-local ConfigSystem = loadstring(game:HttpGet("https://raw.githubusercontent.com/akmiliadevi/Tugas_Kuliah/refs/heads/main/Project_code/Misc/SaveConfig.lua"))()
+local ConfigSystem = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/Project_code/Misc/SaveConfig.lua"))()
 
 local function GetConfigValue(path, default)
     if ConfigSystem then
@@ -2806,13 +2806,13 @@ task.spawn(function()
     pcall(function()
         if ConfigSystem and configStatusText and configStatusText.Parent then
             local hasConfigFile = false
-            pcall(function() hasConfigFile = isfile("LynxGUI_Configs/lynx_config.json") end)
+            pcall(function() hasConfigFile = isfile("JazzyGUI_Configs/jazzy_config.json") end)
             
             local statusIcon = hasConfigFile and "✅" or "⚠️"
             local statusMsg = hasConfigFile and "Config file exists" or "No config saved yet"
             
             configStatusText.Text = string.format(
-                "📦 CONFIG STATUS\n%s %s\n\n💡 Settings auto-save on change!\n📁 Folder: LynxGUI_Configs\n📄 File: lynx_config.json",
+                "📦 CONFIG STATUS\n%s %s\n\n💡 Settings auto-save on change!\n📁 Folder: JazzyGUI_Configs\n📄 File: jazzy_config.json",
                 statusIcon, statusMsg
             )
         end
@@ -2835,7 +2835,7 @@ new("TextLabel", {
     Size = UDim2.new(1, -24, 0, 100),
     Position = UDim2.new(0, 12, 0, 12),
     BackgroundTransparency = 1,
-    Text = "# LynX v2.3 Optimized\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
+    Text = "# Jazzy v2.3 Optimized\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
     Font = Enum.Font.Gotham,
     TextSize = 10,
     TextColor3 = colors.text,
@@ -3381,10 +3381,10 @@ gui.Destroying:Connect(function()
 end)
 
 -- FINAL SUCCESS NOTIFICATION
-SendNotification("✨ Lynx GUI v2.3", "Loaded! " .. loadedModules .. "/" .. totalModules .. " modules ready.", 5)
+SendNotification("✨ Jazzy GUI v2.3", "Loaded! " .. loadedModules .. "/" .. totalModules .. " modules ready.", 5)
 -- CONSOLE OUTPUT (Minimal)
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("✨ Lynx GUI v2.3 Optimized")
+print("✨ Jazzy GUI v2.3 Optimized")
 print("━━━━━━━━━━━━━━━━━━━━━━")
 print("📦 Modules: " .. loadedModules .. "/" .. totalModules)
 
@@ -3565,7 +3565,7 @@ end
 local guiLoaded = true
 
 -- Export functions (if needed)
-local LynxGUI = {
+local JazzyGUI = {
     Version = "2.3.0",
     IsLoaded = function() return guiLoaded end,
     GetModule = GetModule,
@@ -3575,10 +3575,10 @@ local LynxGUI = {
 }
 
 -- Make accessible globally (optional)
-_G.LynxGUI = LynxGUI
+_G.JazzyGUI = JazzyGUI
 
 -- Cleanup function
-function LynxGUI:Destroy()
+function JazzyGUI:Destroy()
     if gui then
         gui:Destroy()
     end
@@ -3587,11 +3587,11 @@ function LynxGUI:Destroy()
 end
 
 -- Final console output
-print("\n✅ LynxGUI v2.3 Optimized - Fully Loaded!")
+print("\n✅ JazzyGUI v2.3 Optimized - Fully Loaded!")
 print("💾 Config System: " .. (ConfigSystem and "Active" or "Inactive"))
 print("📱 Device: " .. (isMobile and "Mobile" or "Desktop"))
 print("⚡ Performance Mode: " .. (isLowEndDevice() and "Enabled" or "Standard"))
 print("\n🎮 Enjoy!\n")
 
 -- FINAL NOTIFICATION
-SendNotification("✨ Lynx GUI v2.3", "Loaded! " .. loadedModules .. "/" .. totalModules .. " modules ready.", 5)
+SendNotification("✨ Jazzy GUI v2.3", "Loaded! " .. loadedModules .. "/" .. totalModules .. " modules ready.", 5)

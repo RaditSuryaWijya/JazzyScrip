@@ -1,4 +1,4 @@
--- LynxGUI_v2.3.lua - Galaxy Edition (OPTIMIZED)
+﻿-- JazzyGUI_v2.3.lua - Galaxy Edition (OPTIMIZED)
 -- BAGIAN 1/6: Core Setup, Services, Loading System
 -- FREE NOT FOR SALE
 
@@ -51,12 +51,12 @@ local loadedModules = 0
 local DEBUG_MODE = false -- Set true untuk debug
 
 -- Send initial loading notification
-SendNotification("🎣 Lynx Script", "Loading modules, please wait...", 3)
+SendNotification("🎣 Jazzy Script", "Loading modules, please wait...", 3)
 
 -- Load Security Loader
 local SecurityLoader
 local loaderSuccess = pcall(function()
-    SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/akmiliadevi/Tugas_Kuliah/refs/heads/main/SecurityLoader.lua"))()
+    SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/SecurityLoader.lua"))()
 end)
 
 if not loaderSuccess then
@@ -124,12 +124,12 @@ local function LoadModules()
     end
     
     local loadPercent = math.floor((loadedModules / totalModules) * 100)
-    SendNotification("✨ Lynx Script Ready", 
+    SendNotification("✨ Jazzy Script Ready", 
         loadedModules .. "/" .. totalModules .. " modules loaded (" .. loadPercent .. "%)", 
         4)
     
     print("━━━━━━━━━━━━━━━━━━━━━━")
-    print("✨ Lynx GUI v2.3")
+    print("✨ Jazzy GUI v2.3")
     print("FREE NOT FOR SALE")
     print("━━━━━━━━━━━━━━━━━━━━━━")
     print("📦 Modules: " .. loadedModules .. "/" .. totalModules .. " loaded")
@@ -167,7 +167,7 @@ end
 -- COLOR PALETTE
 -- ============================================
 local colors = {
-    primary = Color3.fromRGB(255, 140, 0),
+    primary = Color3.fromRGB(33, 150, 243),
     secondary = Color3.fromRGB(147, 112, 219),
     accent = Color3.fromRGB(186, 85, 211),
     galaxy1 = Color3.fromRGB(123, 104, 238),
@@ -200,7 +200,7 @@ local sidebarWidth = 140
 -- ============================================
 
 local gui = new("ScreenGui", {
-    Name = "LynxGUI_Galaxy",
+    Name = "JazzyGUI_Galaxy",
     Parent = localPlayer.PlayerGui,
     IgnoreGuiInset = true,
     ResetOnSpawn = false,
@@ -315,7 +315,7 @@ new("UIStroke", {
 -- Title with glow
 local titleLabel = new("TextLabel", {
     Parent = scriptHeader,
-    Text = "LynX",
+    Text = "Jazzy",
     Size = UDim2.new(0, 80, 1, 0),
     Position = UDim2.new(0, 15, 0, 0),
     BackgroundTransparency = 1,
@@ -331,7 +331,7 @@ local titleLabel = new("TextLabel", {
 -- Title glow effect
 local titleGlow = new("TextLabel", {
     Parent = scriptHeader,
-    Text = "LynX",
+    Text = "Jazzy",
     Size = titleLabel.Size,
     Position = titleLabel.Position,
     BackgroundTransparency = 1,
@@ -751,7 +751,7 @@ btnShop.MouseButton1Click:Connect(function() switchPage("Shop", "Shop Features")
 btnWebhook.MouseButton1Click:Connect(function() switchPage("Webhook", "Webhook Page") end)
 btnCameraView.MouseButton1Click:Connect(function() switchPage("CameraView", "Camera View Settings") end)
 btnSettings.MouseButton1Click:Connect(function() switchPage("Settings", "Settings") end)
-btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Lynx") end)
+btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Jazzy") end)
 
 -- ============================================
 -- UI COMPONENT FUNCTIONS
@@ -2311,7 +2311,7 @@ local FreecamModule = GetModule("FreecamModule")
 local UnlimitedZoomModule = GetModule("UnlimitedZoomModule")
 
 if FreecamModule then
-    FreecamModule.SetMainGuiName("LynxGUI_Galaxy")
+    FreecamModule.SetMainGuiName("JazzyGUI_Galaxy")
 end
 
 -- Unlimited Zoom Category
@@ -2497,7 +2497,7 @@ local infoText = new("TextLabel", {
     Size = UDim2.new(1, -24, 0, 100),
     Position = UDim2.new(0, 12, 0, 12),
     BackgroundTransparency = 1,
-    Text = "# LynX v2.3\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
+    Text = "# Jazzy v2.3\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
     Font = Enum.Font.Gotham,
     TextSize = 10,
     TextColor3 = colors.text,
@@ -2710,9 +2710,9 @@ end)
 -- FINAL SUCCESS MESSAGE
 -- ============================================
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("✨ Lynx GUI v2.3 OPTIMIZED")
+print("✨ Jazzy GUI v2.3 OPTIMIZED")
 print("FREE NOT FOR SALE")
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("💎 Created by Lynx Team")
+print("💎 Created by Jazzy Team")
 print("📦 Modules: " .. loadedModules .. "/" .. totalModules .. " loaded")
 print("━━━━━━━━━━━━━━━━━━━━━━")

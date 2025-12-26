@@ -1,4 +1,4 @@
--- LynxGUI v2.3.1 Performance Optimized - Part 1/8
+﻿-- JazzyGUI v2.3.1 Performance Optimized - Part 1/8
 -- Core Setup & Module Loading System
 -- Fixed: Memory leaks, optimized performance
 
@@ -7,7 +7,7 @@ repeat task.wait() until game:IsLoaded()
 -- ============================================
 -- ANTI-DUPLICATION
 -- ============================================
-local GUI_IDENTIFIER = "LynxGUI_Galaxy_v2.3"
+local GUI_IDENTIFIER = "JazzyGUI_Galaxy_v2.3"
 
 local function CloseExistingGUI()
     local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
@@ -132,7 +132,7 @@ function LoadingNotification.Create()
     
     pcall(function()
         local notifGui = new("ScreenGui", {
-            Name = "LynxLoadingNotification",
+            Name = "JazzyLoadingNotification",
             Parent = localPlayer.PlayerGui,
             ResetOnSpawn = false,
             ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
@@ -164,7 +164,7 @@ function LoadingNotification.Create()
             Size = UDim2.new(1, -80, 0, 24),
             Position = UDim2.new(0, 70, 0, 12),
             BackgroundTransparency = 1,
-            Text = "Lynx Script Loading",
+            Text = "Jazzy Script Loading",
             Font = Enum.Font.GothamBold,
             TextSize = 14,
             TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -245,7 +245,7 @@ function LoadingNotification.Complete(success, loadedCount, totalCount)
     
     pcall(function()
         if LoadingNotification.TitleLabel then
-            LoadingNotification.TitleLabel.Text = success and "Lynx Ready!" or "Loading Complete"
+            LoadingNotification.TitleLabel.Text = success and "Jazzy Ready!" or "Loading Complete"
         end
         
         if LoadingNotification.StatusLabel then
@@ -299,7 +299,7 @@ local CRITICAL_MODULES = {"HideStats", "Webhook", "Notify"}
 LoadingNotification.Create()
 
 -- Load SecurityLoader
-local SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/akmiliadevi/Tugas_Kuliah/refs/heads/main/SecurityLoader.lua"))()
+local SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/SecurityLoader.lua"))()
 
 if not SecurityLoader then
     LoadingNotification.Complete(false, 0, 1)
@@ -393,7 +393,7 @@ end
 -- COLOR PALETTE
 -- ============================================
 local colors = {
-    primary = Color3.fromRGB(255, 140, 0),
+    primary = Color3.fromRGB(33, 150, 243),
     secondary = Color3.fromRGB(147, 112, 219),
     accent = Color3.fromRGB(186, 85, 211),
     success = Color3.fromRGB(34, 197, 94),
@@ -478,13 +478,13 @@ local scriptHeader = new("Frame", {
 })
 new("UICorner", {Parent = scriptHeader, CornerRadius = UDim.new(0, 12)})
 
--- LynxGUI v2.3.1 Performance Optimized - Part 2/8
+-- JazzyGUI v2.3.1 Performance Optimized - Part 2/8
 -- Navigation & UI Components (Baris 601-1200)
 
 -- Title
 local titleLabel = new("TextLabel", {
     Parent = scriptHeader,
-    Text = "LynX",
+    Text = "Jazzy",
     Size = UDim2.new(0, 80, 1, 0),
     Position = UDim2.new(0, 15, 0, 0),
     BackgroundTransparency = 1,
@@ -811,7 +811,7 @@ ConnectionManager:Add(btnShop.MouseButton1Click:Connect(function() switchPage("S
 ConnectionManager:Add(btnWebhook.MouseButton1Click:Connect(function() switchPage("Webhook", "Webhook Page") end))
 ConnectionManager:Add(btnCameraView.MouseButton1Click:Connect(function() switchPage("CameraView", "Camera View Settings") end))
 ConnectionManager:Add(btnSettings.MouseButton1Click:Connect(function() switchPage("Settings", "Settings") end))
-ConnectionManager:Add(btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Lynx") end))
+ConnectionManager:Add(btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Jazzy") end))
 
 -- ============================================
 -- UI COMPONENTS (Memory Optimized)
@@ -1075,7 +1075,7 @@ local function makeButton(parent, label, callback)
     return btnFrame
 end
 
--- LynxGUI v2.3.1 Performance Optimized - Part 3/8
+-- JazzyGUI v2.3.1 Performance Optimized - Part 3/8
 -- Dropdown & Checkbox Components (Baris 1201-1800)
 
 -- Dropdown (Memory Optimized)
@@ -1564,7 +1564,7 @@ end
 -- ============================================
 -- CONFIG SYSTEM
 -- ============================================
-local ConfigSystem = loadstring(game:HttpGet("https://raw.githubusercontent.com/akmiliadevi/Tugas_Kuliah/refs/heads/main/Project_code/Misc/SaveConfig.lua"))()
+local ConfigSystem = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/Project_code/Misc/SaveConfig.lua"))()
 
 local function GetConfigValue(path, default)
     if ConfigSystem then
@@ -1739,7 +1739,7 @@ makeInput(catBlatantV2, "Cancel Delay", savedBlatantTesterCancelDelay, function(
     if blatantv2fix then blatantv2fix.Settings.CancelDelay = v end
 end)
 
--- LynxGUI v2.3.1 Performance Optimized - Part 4/8
+-- JazzyGUI v2.3.1 Performance Optimized - Part 4/8
 -- More Blatant Modes & Support Features (Baris 1801-2400)
 
 -- Blatant V1
@@ -2231,7 +2231,7 @@ if EventTeleport then
     end)
 end
 
--- LynxGUI v2.3.1 Performance Optimized - Part 5/8
+-- JazzyGUI v2.3.1 Performance Optimized - Part 5/8
 -- Shop Page & Webhook Configuration (Baris 2401-3000)
 
 -- ============================================
@@ -2737,7 +2737,7 @@ makeInput(catFreecam, "Mouse Sensitivity", GetConfigValue("CameraView.Freecam.Se
     if FreecamModule then FreecamModule.SetSensitivity(value) end
 end)
 
--- LynxGUI v2.3.1 Performance Optimized - Part 6/8
+-- JazzyGUI v2.3.1 Performance Optimized - Part 6/8
 -- Settings Page & Hide Stats (Baris 3001-3600)
 
 -- ============================================
@@ -3039,13 +3039,13 @@ task.spawn(function()
     pcall(function()
         if ConfigSystem and configStatusText and configStatusText.Parent then
             local hasConfigFile = false
-            pcall(function() hasConfigFile = isfile("LynxGUI_Configs/lynx_config.json") end)
+            pcall(function() hasConfigFile = isfile("JazzyGUI_Configs/Jazzy_config.json") end)
             
             local statusIcon = hasConfigFile and "✅" or "⚠️"
             local statusMsg = hasConfigFile and "Config file exists" or "No config saved yet"
             
             configStatusText.Text = string.format(
-                "📦 CONFIG STATUS\n%s %s\n\n💡 Settings auto-save on change!\n📁 Folder: LynxGUI_Configs\n📄 File: lynx_config.json",
+                "📦 CONFIG STATUS\n%s %s\n\n💡 Settings auto-save on change!\n📁 Folder: JazzyGUI_Configs\n📄 File: Jazzy_config.json",
                 statusIcon, statusMsg
             )
         end
@@ -3070,7 +3070,7 @@ new("TextLabel", {
     Size = UDim2.new(1, -24, 0, 100),
     Position = UDim2.new(0, 12, 0, 12),
     BackgroundTransparency = 1,
-    Text = "# LynX v2.3.1 Optimized\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
+    Text = "# Jazzy v2.3.1 Optimized\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
     Font = Enum.Font.Gotham,
     TextSize = 10,
     TextColor3 = colors.text,
@@ -3298,7 +3298,7 @@ task.spawn(function()
     tween2:Play()
 end)
 
--- LynxGUI v2.3.1 Performance Optimized - Part 7/8
+-- JazzyGUI v2.3.1 Performance Optimized - Part 7/8
 -- Config Loading & Module Startup System (Baris 3601-4200)
 
 -- ============================================
@@ -3646,7 +3646,7 @@ end
 
 -- Cleanup function to prevent memory leaks
 local function CleanupGUI()
-    print("🧹 Cleaning up LynxGUI...")
+    print("🧹 Cleaning up JazzyGUI...")
     
     -- Stop all active modules
     for name, module in pairs(Modules) do
@@ -3694,7 +3694,7 @@ local function CleanupGUI()
         icon = nil
     end
     
-    print("✅ LynxGUI cleanup complete!")
+    print("✅ JazzyGUI cleanup complete!")
 end
 
 -- Register cleanup on GUI destroy
@@ -3790,7 +3790,7 @@ end)
 local guiLoaded = true
 
 -- Export functions
-local LynxGUI = {
+local JazzyGUI = {
     Version = "2.3.1",
     IsLoaded = function() return guiLoaded end,
     GetModule = GetModule,
@@ -3801,10 +3801,10 @@ local LynxGUI = {
 }
 
 -- Make accessible globally
-_G.LynxGUI = LynxGUI
+_G.JazzyGUI = JazzyGUI
 
 -- Destroy function
-function LynxGUI:Destroy()
+function JazzyGUI:Destroy()
     CleanupGUI()
     guiLoaded = false
 end
@@ -3814,11 +3814,11 @@ end
 -- ============================================
 
 -- Final success notification
-SendNotification("✨ Lynx GUI v2.3.1", "Loaded! " .. loadedModules .. "/" .. totalModules .. " modules ready.", 5)
+SendNotification("✨ Jazzy GUI v2.3.1", "Loaded! " .. loadedModules .. "/" .. totalModules .. " modules ready.", 5)
 
 -- Console output
 print("\n━━━━━━━━━━━━━━━━━━━━━━")
-print("✨ LynxGUI v2.3.1 Performance Optimized")
+print("✨ JazzyGUI v2.3.1 Performance Optimized")
 print("━━━━━━━━━━━━━━━━━━━━━━")
 print("📦 Modules: " .. loadedModules .. "/" .. totalModules)
 
@@ -3881,7 +3881,7 @@ MEMORY LEAK FIXES APPLIED:
    - Debug mode available
 ]]
 
--- LynxGUI v2.3.1 Performance Optimized - Part 8/8 FINAL
+-- JazzyGUI v2.3.1 Performance Optimized - Part 8/8 FINAL
 -- Feature Summary & Documentation (Baris 4201-end)
 
 -- ============================================
@@ -3890,7 +3890,7 @@ MEMORY LEAK FIXES APPLIED:
 
 --[[
 ═══════════════════════════════════════════════════════════════════════════
-                    LYNXGUI v2.3.1 PERFORMANCE OPTIMIZED
+                    JazzyGUI v2.3.1 PERFORMANCE OPTIMIZED
                            MEMORY LEAK FIXED
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -4127,7 +4127,7 @@ CONFIG SYSTEM:
   - Delete: Settings > Delete Config File
 
 CLEANUP:
-  - Close button: _G.LynxGUI:Destroy()
+  - Close button: _G.JazzyGUI:Destroy()
   - Auto-cleanup on GUI destroy
   - All modules stopped automatically
   - Memory properly released
@@ -4328,7 +4328,7 @@ task.spawn(function()
     print("   Tweens: " .. #ConnectionManager.tweens)
     print("   Modules: " .. loadedModules .. "/" .. totalModules)
     print("   Status: ✅ All systems operational!")
-    print("\n✨ LynxGUI v2.3.1 - Ready!\n")
+    print("\n✨ JazzyGUI v2.3.1 - Ready!\n")
 end)
 
 -- ============================================
@@ -4339,11 +4339,11 @@ end)
 -- Memory management is active
 -- Cleanup will trigger on GUI destroy
 
-return LynxGUI
+return JazzyGUI
 
 --[[
 ═══════════════════════════════════════════════════════════════════════════
-                    END OF LYNXGUI v2.3.1 OPTIMIZED
-                      THANK YOU FOR USING LYNXGUI!
+                    END OF JazzyGUI v2.3.1 OPTIMIZED
+                      THANK YOU FOR USING JazzyGUI!
 ═══════════════════════════════════════════════════════════════════════════
 ]]

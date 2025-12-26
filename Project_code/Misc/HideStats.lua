@@ -1,4 +1,4 @@
--- Hide Stats Identifier Module untuk Fisch Roblox
+﻿-- Hide Stats Identifier Module untuk Fisch Roblox
 -- Standalone version untuk dipanggil via loadstring
 
 local Players = game:GetService("Players")
@@ -10,21 +10,21 @@ local HideStatsModule = {}
 local HideStatsEnabled = false
 local FakeName = "Guest"
 local FakeLevel = "1"
-local ScriptName = "-LynX-"
+local ScriptName = "-Jazzy-"
 
 -- Variable untuk menyimpan original text
 local OriginalTexts = {}
 local ActiveGradientThreads = {}
 
--- Warna untuk efek shimmer/berkilau Orange-Putih
+-- Warna untuk efek shimmer/berkilau Blue-Putih
 local ShimmerColors = {
-    Color3.fromRGB(255, 140, 0),   -- Dark Orange
-    Color3.fromRGB(255, 180, 50),  -- Orange
-    Color3.fromRGB(255, 220, 150), -- Light Orange
+    Color3.fromRGB(30, 58, 138),   -- Dark Blue
+    Color3.fromRGB(59, 130, 246),  -- Blue
+    Color3.fromRGB(147, 197, 253), -- Light Blue
     Color3.fromRGB(255, 255, 255), -- Putih (kilau)
-    Color3.fromRGB(255, 220, 150), -- Light Orange
-    Color3.fromRGB(255, 180, 50),  -- Orange
-    Color3.fromRGB(255, 140, 0),   -- Dark Orange
+    Color3.fromRGB(147, 197, 253), -- Light Blue
+    Color3.fromRGB(59, 130, 246),  -- Blue
+    Color3.fromRGB(30, 58, 138),   -- Dark Blue
 }
 
 -- Fungsi untuk membuat UIGradient shimmer effect yang bergerak
@@ -44,17 +44,17 @@ local function createMovingGradient(label)
     local colorKeypoints = {}
     
     local basePattern = {
-        {0.00, Color3.fromRGB(255, 140, 0)},
-        {0.10, Color3.fromRGB(255, 160, 30)},
-        {0.20, Color3.fromRGB(255, 200, 100)},
+        {0.00, Color3.fromRGB(30, 58, 138)},
+        {0.10, Color3.fromRGB(59, 130, 246)},
+        {0.20, Color3.fromRGB(147, 197, 253)},
         {0.30, Color3.fromRGB(255, 255, 255)},
-        {0.40, Color3.fromRGB(255, 200, 100)},
-        {0.50, Color3.fromRGB(255, 160, 30)},
-        {0.60, Color3.fromRGB(255, 140, 0)},
-        {0.70, Color3.fromRGB(255, 160, 30)},
-        {0.80, Color3.fromRGB(255, 200, 100)},
+        {0.40, Color3.fromRGB(147, 197, 253)},
+        {0.50, Color3.fromRGB(59, 130, 246)},
+        {0.60, Color3.fromRGB(30, 58, 138)},
+        {0.70, Color3.fromRGB(59, 130, 246)},
+        {0.80, Color3.fromRGB(147, 197, 253)},
         {0.90, Color3.fromRGB(255, 255, 255)},
-        {1.00, Color3.fromRGB(255, 140, 0)},
+        {1.00, Color3.fromRGB(30, 58, 138)},
     }
     
     for _, data in ipairs(basePattern) do
@@ -87,7 +87,7 @@ end
 local function createScriptNameLabel(nameLabel, billboard)
     if not nameLabel or not billboard then return end
     
-    local existingFrame = billboard:FindFirstChild("LynxFrame")
+    local existingFrame = billboard:FindFirstChild("JazzyFrame")
     if existingFrame then 
         return existingFrame
     end
@@ -103,25 +103,25 @@ local function createScriptNameLabel(nameLabel, billboard)
         originalNamePos.Y.Offset
     )
     
-    local lynxFrame = Instance.new("Frame")
-    lynxFrame.Name = "LynxFrame"
-    lynxFrame.Size = nameFrame.Size
-    lynxFrame.Position = originalNamePos
-    lynxFrame.BackgroundTransparency = 1
-    lynxFrame.Parent = billboard
+    local JazzyFrame = Instance.new("Frame")
+    JazzyFrame.Name = "JazzyFrame"
+    JazzyFrame.Size = nameFrame.Size
+    JazzyFrame.Position = originalNamePos
+    JazzyFrame.BackgroundTransparency = 1
+    JazzyFrame.Parent = billboard
     
     local scriptLabel = nameLabel:Clone()
-    scriptLabel.Name = "LynxLabel"
+    scriptLabel.Name = "JazzyLabel"
     scriptLabel.Text = ScriptName
     scriptLabel.TextScaled = true
     scriptLabel.Font = Enum.Font.GothamBold
     scriptLabel.TextStrokeTransparency = 0.5
     scriptLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-    scriptLabel.Parent = lynxFrame
+    scriptLabel.Parent = JazzyFrame
     
     createMovingGradient(scriptLabel)
     
-    return lynxFrame
+    return JazzyFrame
 end
 
 -- Fungsi untuk menghapus semua script name labels
@@ -135,8 +135,8 @@ local function removeAllScriptNames()
     local overhead = hrp:FindFirstChild("Overhead")
     if not overhead then return end
     
-    local lynxFrame = overhead:FindFirstChild("LynxFrame")
-    if lynxFrame then
+    local JazzyFrame = overhead:FindFirstChild("JazzyFrame")
+    if JazzyFrame then
         for threadId, _ in pairs(ActiveGradientThreads) do
             ActiveGradientThreads[threadId] = nil
         end
@@ -155,7 +155,7 @@ local function removeAllScriptNames()
             end
         end
         
-        lynxFrame:Destroy()
+        JazzyFrame:Destroy()
     end
 end
 
@@ -187,7 +187,7 @@ local function updateStats()
             
             if originalText and originalText ~= "" then
                 if obj.Name == "Header" then
-                    if not overhead:FindFirstChild("LynxFrame") then
+                    if not overhead:FindFirstChild("JazzyFrame") then
                         createScriptNameLabel(obj, overhead)
                     end
                     obj.Text = FakeName

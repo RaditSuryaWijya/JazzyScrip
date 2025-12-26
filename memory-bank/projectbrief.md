@@ -56,7 +56,7 @@ Tugas_Kuliah-main/
 
 ## Target Platform
 - Roblox Platform
-- Executor: Lynx (dari konteks SecurityLoader)
+- Executor: Jazzy (dari konteks SecurityLoader)
 - Compatible dengan berbagai Roblox executors
 
 ## Status Proyek

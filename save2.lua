@@ -1,11 +1,11 @@
--- ConfigSystem.lua - Selective Save on Minimize Version
+﻿-- ConfigSystem.lua - Selective Save on Minimize Version
 local HttpService = game:GetService("HttpService")
 
 local ConfigSystem = {}
 ConfigSystem.Version = "1.4"
 
-local CONFIG_FOLDER = "LynxGUI_Configs"
-local CONFIG_FILE = CONFIG_FOLDER .. "/lynx_config.json"
+local CONFIG_FOLDER = "JazzyGUI_Configs"
+local CONFIG_FILE = CONFIG_FOLDER .. "/Jazzy_config.json"
 
 -- ✅ WHITELIST: Paths yang akan di-save saat minimize
 local SAVE_ON_MINIMIZE_PATHS = {

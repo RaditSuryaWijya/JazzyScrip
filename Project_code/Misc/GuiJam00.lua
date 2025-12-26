@@ -1,4 +1,4 @@
--- LynxGUI_v2.3.lua - FIXED MODULE LOADING (Part 1/6)
+﻿-- JazzyGUI_v2.3.lua - FIXED MODULE LOADING (Part 1/6)
 -- Core Setup, Services, Advanced Loading System
 -- FREE NOT FOR SALE
 
@@ -59,15 +59,15 @@ local CRITICAL_MODULES = {
 }
 
 -- Send initial loading notification
-SendNotification("🎣 Lynx Script", "Initializing Security Loader...", 3)
+SendNotification("🎣 Jazzy Script", "Initializing Security Loader...", 3)
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("🔄 LYNX GUI v2.3 - LOADING")
+print("🔄 Jazzy GUI v2.3 - LOADING")
 print("━━━━━━━━━━━━━━━━━━━━━━")
 
 -- Load Security Loader
 local SecurityLoader
 local loaderSuccess, loaderError = pcall(function()
-    SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/akmiliadevi/Tugas_Kuliah/refs/heads/main/SecurityLoader.lua"))()
+    SecurityLoader = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaditSuryaWijya/JazzyScrip/refs/heads/main/SecurityLoader.lua"))()
 end)
 
 if not loaderSuccess or not SecurityLoader then
@@ -223,7 +223,7 @@ local function LoadAllModules()
     end
     
     local percent = math.floor((loadedModules / totalModules) * 100)
-    SendNotification("✨ Lynx Ready!", 
+    SendNotification("✨ Jazzy Ready!", 
         string.format("%d/%d modules loaded (%d%%)", loadedModules, totalModules, percent), 
         4)
     
@@ -274,7 +274,7 @@ print("\n✅ All critical modules verified - Proceeding to GUI creation...\n")
 -- COLOR PALETTE
 -- ============================================
 local colors = {
-    primary = Color3.fromRGB(255, 140, 0),
+    primary = Color3.fromRGB(33, 150, 243),
     secondary = Color3.fromRGB(147, 112, 219),
     accent = Color3.fromRGB(186, 85, 211),
     galaxy1 = Color3.fromRGB(123, 104, 238),
@@ -310,7 +310,7 @@ local sidebarWidth = 140
 -- ============================================
 
 local gui = new("ScreenGui", {
-    Name = "LynxGUI_Galaxy",
+    Name = "JazzyGUI_Galaxy",
     Parent = localPlayer.PlayerGui,
     IgnoreGuiInset = true,
     ResetOnSpawn = false,
@@ -425,7 +425,7 @@ new("UIStroke", {
 -- Title with glow
 local titleLabel = new("TextLabel", {
     Parent = scriptHeader,
-    Text = "LynX",
+    Text = "Jazzy",
     Size = UDim2.new(0, 80, 1, 0),
     Position = UDim2.new(0, 15, 0, 0),
     BackgroundTransparency = 1,
@@ -441,7 +441,7 @@ local titleLabel = new("TextLabel", {
 -- Title glow effect
 local titleGlow = new("TextLabel", {
     Parent = scriptHeader,
-    Text = "LynX",
+    Text = "Jazzy",
     Size = titleLabel.Size,
     Position = titleLabel.Position,
     BackgroundTransparency = 1,
@@ -865,7 +865,7 @@ btnShop.MouseButton1Click:Connect(function() switchPage("Shop", "Shop Features")
 btnWebhook.MouseButton1Click:Connect(function() switchPage("Webhook", "Webhook Page") end)
 btnCameraView.MouseButton1Click:Connect(function() switchPage("CameraView", "Camera View Settings") end)
 btnSettings.MouseButton1Click:Connect(function() switchPage("Settings", "Settings") end)
-btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Lynx") end)
+btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Jazzy") end)
 
 -- ============================================
 -- UI COMPONENT FUNCTIONS
@@ -2680,7 +2680,7 @@ makeButton(catWebhook, "Test Webhook Connection", function()
         local testPayload = {
             embeds = {{
                 title = "🎣 Webhook Test Successful!",
-                description = "Your Discord webhook is working correctly!\n\nLynx GUI is ready to send fish notifications." .. filterText,
+                description = "Your Discord webhook is working correctly!\n\nJazzy GUI is ready to send fish notifications." .. filterText,
                 color = 3447003,
                 timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
             }}
@@ -2769,7 +2769,7 @@ local FreecamModule = GetModule("FreecamModule")
 local UnlimitedZoomModule = GetModule("UnlimitedZoomModule")
 
 if FreecamModule then
-    FreecamModule.SetMainGuiName("LynxGUI_Galaxy")
+    FreecamModule.SetMainGuiName("JazzyGUI_Galaxy")
 end
 
 -- Unlimited Zoom Category
@@ -3147,7 +3147,7 @@ local infoText = new("TextLabel", {
     Size = UDim2.new(1, -24, 0, 100),
     Position = UDim2.new(0, 12, 0, 12),
     BackgroundTransparency = 1,
-    Text = "# LynX v2.3\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
+    Text = "# Jazzy v2.3\nFree Not For Sale\n━━━━━━━━━━━━━━━━━━━━━━\nCreated by Beee\nRefined Edition 2024",
     Font = Enum.Font.Gotham,
     TextSize = 10,
     TextColor3 = colors.text,
@@ -3372,10 +3372,10 @@ end)
 -- FINAL SUCCESS MESSAGE
 -- ============================================
 print("\n━━━━━━━━━━━━━━━━━━━━━━")
-print("✨ Lynx GUI v2.3 FIXED")
+print("✨ Jazzy GUI v2.3 FIXED")
 print("FREE NOT FOR SALE")
 print("━━━━━━━━━━━━━━━━━━━━━━")
-print("💎 Created by Lynx Team")
+print("💎 Created by Jazzy Team")
 print("📦 Modules: " .. loadedModules .. "/" .. totalModules .. " loaded")
 
 -- Safe verification
@@ -3393,4 +3393,4 @@ end
 
 print("━━━━━━━━━━━━━━━━━━━━━━\n")
 
-SendNotification("🎉 Lynx GUI Ready!", "All systems operational!", 3)
+SendNotification("🎉 Jazzy GUI Ready!", "All systems operational!", 3)
