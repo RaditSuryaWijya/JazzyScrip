@@ -8,11 +8,17 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 -- Parent ke PlayerGui AGAR TIDAK TERBLOCK EXECUTOR
+local playerGui = LocalPlayer:WaitForChild("PlayerGui", 10) or LocalPlayer.PlayerGui
+if not playerGui then
+    warn("⚠️ Notification: PlayerGui not available")
+    return {Send = function() end}  -- Return dummy module
+end
+
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "JazzyNotifications"
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Parent = playerGui
 
 -- Holder kanan bawah
 local Holder = Instance.new("Frame")
@@ -41,7 +47,7 @@ function Notify.Send(title, message, duration)
     Frame.Parent = Holder
     Frame.ClipsDescendants = true
     Frame.AutomaticSize = Enum.AutomaticSize.Y
-    Frame.LayoutOrder = os.clock()
+    Frame.LayoutOrder = tick() or 0
 
     local UICorner = Instance.new("UICorner", Frame)
     UICorner.CornerRadius = UDim.new(0, 12)

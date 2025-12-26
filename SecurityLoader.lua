@@ -286,7 +286,13 @@ function SecurityLoader.LoadModule(moduleName)
     
     if not url then
         warn("❌ Module not found:", moduleName)
+        warn("   Available modules:", table.concat(modulePaths and {} or {}, ", "))
         return nil
+    end
+    
+    -- Debug: Show URL being used (only for first few modules to avoid spam)
+    if moduleName == "Notify" or moduleName == "HideStats" or moduleName == "Webhook" then
+        print("🔍 Loading", moduleName, "from:", url)
     end
     
     -- Final validation (bypassed if ENABLE_DOMAIN_CHECK = false)
@@ -302,12 +308,70 @@ function SecurityLoader.LoadModule(moduleName)
         end
     end
     
+    -- Load module with better error handling
     local success, result = pcall(function()
-        return loadstring(game:HttpGet(url))()
+        -- Get the script content
+        local scriptContent = nil
+        local httpSuccess, httpResult = pcall(function()
+            -- Try sync first (most executors)
+            scriptContent = game:HttpGet(url)
+            return scriptContent
+        end)
+        
+        if not httpSuccess or not scriptContent or scriptContent == "" then
+            -- Try async if sync failed
+            local asyncSuccess, asyncResult = pcall(function()
+                return game:HttpGet(url, true)
+            end)
+            if asyncSuccess and asyncResult then
+                scriptContent = asyncResult
+            else
+                error("HTTP request failed: " .. tostring(httpResult or asyncResult or "Unknown error"))
+            end
+        end
+        
+        if not scriptContent or scriptContent == "" then
+            error("Empty script content from URL: " .. url)
+        end
+        
+        -- Load and execute the script
+        local loadedScript = loadstring(scriptContent)
+        
+        if not loadedScript then
+            error("loadstring returned nil for: " .. moduleName)
+        end
+        
+        -- Execute the script
+        local execResult = loadedScript()
+        
+        if execResult == nil then
+            warn("⚠️ Module", moduleName, "executed but returned nil")
+            warn("   This might be OK if module uses global variables")
+            -- Return empty table as fallback
+            return {}
+        end
+        
+        -- Verify result is valid
+        if type(execResult) ~= "table" and type(execResult) ~= "function" then
+            warn("⚠️ Module", moduleName, "returned unexpected type:", type(execResult))
+            -- Wrap in table if needed
+            if type(execResult) == "nil" then
+                return {}
+            end
+        end
+        
+        return execResult
     end)
     
     if not success then
-        warn("❌ Failed to load", moduleName, ":", result)
+        warn("❌ Failed to load", moduleName)
+        warn("   URL:", url)
+        warn("   Error:", result)
+        return nil
+    end
+    
+    if not result then
+        warn("⚠️ Module", moduleName, "loaded but returned nil")
         return nil
     end
     

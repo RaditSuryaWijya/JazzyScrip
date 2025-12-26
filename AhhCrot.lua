@@ -278,24 +278,41 @@ local function LoadModuleWithRetry(moduleName, retryCount)
     retryCount = retryCount or 0
     
     local success, result = pcall(function()
+        if not SecurityLoader or not SecurityLoader.LoadModule then
+            error("SecurityLoader.LoadModule is not available")
+        end
         return SecurityLoader.LoadModule(moduleName)
     end)
     
     if success and result then
-        Modules[moduleName] = result
-        ModuleStatus[moduleName] = "✅"
-        loadedModules = loadedModules + 1
-        return true
-    else
-        if retryCount < MAX_RETRIES then
-            task.wait(RETRY_DELAY)
-            return LoadModuleWithRetry(moduleName, retryCount + 1)
+        -- Verify result is a table/valid module
+        if type(result) == "table" or type(result) == "function" then
+            Modules[moduleName] = result
+            ModuleStatus[moduleName] = "✅"
+            loadedModules = loadedModules + 1
+            return true
         else
-            Modules[moduleName] = nil
-            ModuleStatus[moduleName] = "❌"
-            table.insert(failedModules, moduleName)
-            return false
+            warn("⚠️ Module", moduleName, "loaded but invalid type:", type(result))
         end
+    end
+    
+    -- Retry logic
+    if retryCount < MAX_RETRIES then
+        warn("🔄 Retrying", moduleName, "(" .. (retryCount + 1) .. "/" .. MAX_RETRIES .. ")")
+        if not success then
+            warn("   Error:", result)
+        end
+        task.wait(RETRY_DELAY)
+        return LoadModuleWithRetry(moduleName, retryCount + 1)
+    else
+        Modules[moduleName] = nil
+        ModuleStatus[moduleName] = "❌"
+        table.insert(failedModules, moduleName)
+        warn("❌ Failed to load", moduleName, "after", MAX_RETRIES, "retries")
+        if not success then
+            warn("   Last error:", result)
+        end
+        return false
     end
 end
 
@@ -309,10 +326,57 @@ local function LoadAllModules()
         local success = LoadModuleWithRetry(moduleName)
         
         if not success and isCritical then
-            LoadingNotification.Complete(false, loadedModules, totalModules)
-            SendNotification("❌ CRITICAL", moduleName .. " failed!", 10)
-            error("CRITICAL MODULE FAILED: " .. moduleName)
-            return false
+            warn("⚠️ CRITICAL MODULE FAILED:", moduleName)
+            warn("   Attempting to create fallback module...")
+            
+            -- Create fallback module for critical modules
+            if moduleName == "Notify" then
+                local fallbackNotify = {
+                    Send = function(title, message, duration)
+                        print("[Notify] " .. tostring(title) .. ": " .. tostring(message))
+                        pcall(function()
+                            game:GetService("StarterGui"):SetCore("SendNotification", {
+                                Title = tostring(title),
+                                Text = tostring(message),
+                                Duration = duration or 3
+                            })
+                        end)
+                    end
+                }
+                Modules[moduleName] = fallbackNotify
+                ModuleStatus[moduleName] = "⚠️ (Fallback)"
+                loadedModules = loadedModules + 1
+                warn("   ✅ Fallback Notify module created")
+            elseif moduleName == "HideStats" then
+                local fallbackHideStats = {
+                    Enable = function() warn("HideStats fallback: Enable not available") end,
+                    Disable = function() warn("HideStats fallback: Disable not available") end,
+                    SetFakeName = function() end,
+                    SetFakeLevel = function() end
+                }
+                Modules[moduleName] = fallbackHideStats
+                ModuleStatus[moduleName] = "⚠️ (Fallback)"
+                loadedModules = loadedModules + 1
+                warn("   ✅ Fallback HideStats module created")
+            elseif moduleName == "Webhook" then
+                local fallbackWebhook = {
+                    Start = function() warn("Webhook fallback: Start not available") end,
+                    Stop = function() warn("Webhook fallback: Stop not available") end,
+                    SetWebhookURL = function() end,
+                    SetDiscordUserID = function() end,
+                    SetEnabledRarities = function() end,
+                    IsSupported = function() return false end
+                }
+                Modules[moduleName] = fallbackWebhook
+                ModuleStatus[moduleName] = "⚠️ (Fallback)"
+                loadedModules = loadedModules + 1
+                warn("   ✅ Fallback Webhook module created")
+            else
+                LoadingNotification.Complete(false, loadedModules, totalModules)
+                SendNotification("❌ CRITICAL", moduleName .. " failed!", 10)
+                error("CRITICAL MODULE FAILED: " .. moduleName)
+                return false
+            end
         end
     end
     
