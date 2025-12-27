@@ -85,7 +85,7 @@ local TIER_COLORS = {
     [4] = 10181046,
     [5] = 15844367,
     [6] = 15548997,
-    [7] = 16711680
+    [7] = 65450
 }
 
 local isRunning = false
@@ -262,7 +262,17 @@ local function send(fish, meta, extra)
     local playerDisplayName = getPlayerDisplayName()
     local mention = WebhookModule.Config.DiscordUserID ~= "" and "<@" .. WebhookModule.Config.DiscordUserID .. "> " or ""
     
+    -- New Fish Name Logic
     local fishName = fish.Data.Name
+    if variantId then
+        local v = getVariant(variantId)
+        if v and v.Data and v.Data.Name then
+            fishName = v.Data.Name .. " " .. fishName
+        end
+    end
+    if isShiny then
+        fishName = "Shiny " .. fishName
+    end
     if fish.Weight and fish.Weight.Big and meta.Weight then
         local bigThreshold = fish.Weight.Big
         if typeof(bigThreshold) == "NumberRange" then
@@ -273,16 +283,19 @@ local function send(fish, meta, extra)
         end
     end
 
+    local weightFormated = formatNumber(meta.Weight) or 0
+    local finalPriceFormated = formatNumber(math.floor(finalPrice))
+
     local congratsMsg = string.format(
-        "%s **%s** You have obtained a new **%s** fish!",
+        "%s You have obtained a new **%s** fish: **%s**!",
         mention,
-        fishName,
-        tier
+        tier,
+        fishName
     )
     
     local fields = {
         {
-            name = "Fish Name :",
+            name = "Fish Details :",
             value = "> " .. fishName,
             inline = false
         },
@@ -293,12 +306,12 @@ local function send(fish, meta, extra)
         },
         {
             name = "Weight :",
-            value = string.format("> %.2f Kg", meta.Weight or 0),
+            value = "> " ..weightFormated.. "kg",
             inline = false
         },
         {
             name = "Chance :",
-            value = "> *" .. chanceText .. "*",
+            value = "> " .. chanceText,
             inline = false
         },
         {
@@ -308,7 +321,7 @@ local function send(fish, meta, extra)
         },
         {
             name = "Sell Price :",
-            value = "> $" .. math.floor(finalPrice),
+            value = "> $" ..finalPriceFormated,
             inline = false
         }
     }
