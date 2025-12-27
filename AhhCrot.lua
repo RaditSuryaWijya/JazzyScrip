@@ -299,7 +299,7 @@ local ModuleList = {
     "TeleportModule", "TeleportToPlayer", "SavedLocation", "EventTeleportDynamic",
     "AutoQuestModule", "AutoTemple", "TempleDataReader",
     "AutoSell", "AutoSellTimer", "MerchantSystem", "RemoteBuyer", "AutoBuyWeather",
-    "FreecamModule", "UnlimitedZoomModule", "AntiAFK", "UnlockFPS", "FPSBooster", "DisableRendering"
+    "FreecamModule", "UnlimitedZoomModule", "AntiAFK", "UnlockFPS", "FPSBooster", "DisableRendering", "Fly"
 }
 
 totalModules = #ModuleList
@@ -733,6 +733,7 @@ local webhookPage = createPage("Webhook")
 local cameraViewPage = createPage("CameraView")
 local settingsPage = createPage("Settings")
 local infoPage = createPage("Info")
+local miscPage = createPage("Misc")
 mainPage.Visible = true
 
 -- Navigation Button
@@ -847,6 +848,7 @@ local btnWebhook = createNavButton("Webhook", "🔗", "Webhook", 4)
 local btnCameraView = createNavButton("Camera View", "📷", "CameraView", 5)
 local btnSettings = createNavButton("Settings", "⚙️", "Settings", 6)
 local btnInfo = createNavButton("About", "ℹ️", "Info", 7)
+local btnMisc = createNavButton("Misc", "✨", "Misc", 8)
 
 btnMain.MouseButton1Click:Connect(function() switchPage("Main", "Main Dashboard") end)
 btnTeleport.MouseButton1Click:Connect(function() switchPage("Teleport", "Teleport System") end)
@@ -855,6 +857,7 @@ btnWebhook.MouseButton1Click:Connect(function() switchPage("Webhook", "Webhook P
 btnCameraView.MouseButton1Click:Connect(function() switchPage("CameraView", "Camera View Settings") end)
 btnSettings.MouseButton1Click:Connect(function() switchPage("Settings", "Settings") end)
 btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Jazzy") end)
+btnMisc.MouseButton1Click:Connect(function() switchPage("Misc", "Misc Features") end)
 
 -- ============================================
 -- UI COMPONENTS
@@ -1884,6 +1887,21 @@ ToggleReferences.GoodPerfectionStable = makeToggle(catSupport, "Good/Perfection 
         if on then GoodPerfectionStable.Start() else GoodPerfectionStable.Stop() end
     end
 end)
+
+-- ============================================
+-- MISC FEATURES
+-- ============================================
+local catMisc = makeCategory(miscPage, "Misc Features", "✨")
+
+ToggleReferences.Fly = makeToggle(catMisc, "Fly", function(on)
+    SetConfigValue("Misc.Fly", on)
+    SaveCurrentConfig()
+    local Fly = GetModule("Fly")
+    if Fly then
+        Fly:Toggle(on)
+    end
+end)
+
 
 -- ============================================
 -- AUTO FAVORITE (MINIMAL)

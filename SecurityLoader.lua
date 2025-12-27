@@ -66,6 +66,7 @@ local modulePaths = {
     AutoFavorite = "Utama/AutoFavorite.lua",
     PingFPSMonitor = "Misc/PingPanel.lua",
     MovementModule = "Misc/MovementModule.lua",
+    Fly = "Misc/Fly.lua",
 }
 
 -- ============================================

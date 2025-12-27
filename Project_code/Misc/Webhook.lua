@@ -276,7 +276,7 @@ local function send(fish, meta, extra)
     local congratsMsg = string.format(
         "%s **%s** You have obtained a new **%s** fish!",
         mention,
-        playerDisplayName,
+        fishName,
         tier
     )
     
