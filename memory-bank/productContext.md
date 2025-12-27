@@ -54,21 +54,25 @@ Proyek ini dibuat untuk menyediakan solusi automation yang komprehensif untuk ga
 - GUI yang intuitif dan mudah dipahami
 - Toggle on/off yang jelas
 - Visual feedback untuk status
+- Personalized UI dengan avatar user
 
 ### Reliability
 - Error handling yang baik
-- Fallback mechanisms
+- Fallback mechanisms (3-tier untuk avatar fetching)
 - Timeout handling
+- Enhanced debug info untuk troubleshooting
 
 ### Performance
 - Minimal lag
 - Efficient memory usage
 - Fast execution
+- Direct URL loading untuk faster module loading
 
 ### Security
-- Protected script loading
+- Protected script loading (direct URLs dengan bypass domain check)
 - Rate limiting
-- Domain validation
+- Domain validation (disabled untuk simplicity)
+- Anti-dump protection available
 
 ## Target Users
 - Mahasiswa yang memerlukan automation untuk tugas

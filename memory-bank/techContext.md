@@ -56,9 +56,10 @@ Tugas_Kuliah-main/
 - Modules → Network events (via ReplicatedStorage)
 
 ### External Dependencies
-- **GitHub Raw URLs**: Untuk hosting encrypted modules
+- **GitHub Raw URLs**: Untuk hosting modules (repository: RaditSuryaWijya/JazzyScrip)
 - **Roblox Game**: Target game dengan network structure
 - **sleitnick_net**: Network library di ReplicatedStorage
+- **Roblox Thumbnail API**: Untuk user avatar fetching (GetUserThumbnailAsync atau HTTP API)
 
 ## Development Tools
 
@@ -87,16 +88,21 @@ Tugas_Kuliah-main/
 
 ## Security Measures
 
-### Encryption
-- Base64 + XOR encryption
-- Obfuscated secret keys
-- Encrypted module URLs
+### Encryption (Currently Bypassed)
+- Base64 + XOR encryption (available but not used)
+- Obfuscated secret keys (available)
+- Direct URL loading (USE_DIRECT_URLS = true)
 
 ### Protection
-- Anti-dump protection
-- Domain validation
-- Rate limiting
+- Anti-dump protection (available)
+- Domain validation (disabled: ENABLE_DOMAIN_CHECK = false)
+- Rate limiting (ENABLE_RATE_LIMITING = true)
 - Session tracking
+
+### Avatar Integration
+- GetUserThumbnailAsync (Roblox official method)
+- Thumbnail API fallback (HTTP request + JSON parse)
+- Direct URL fallback (format: https://www.roblox.com/headshot-thumbnail/image?userId=...)
 
 ## Configuration
 
@@ -104,12 +110,17 @@ Tugas_Kuliah-main/
 - Module delays (FishingDelay, CancelDelay, etc.)
 - Timeout values
 - Rate limits
-- Security flags
+- Security flags (USE_DIRECT_URLS, ENABLE_DOMAIN_CHECK, ENABLE_RATE_LIMITING)
+- Avatar thumbnail size (default: 150x150)
 
 ### Default Values
 - Fishing delays: 0.01-1.30 seconds
 - Timeout delays: 0.5-1.1 seconds
 - Rate limit: 100 loads per session
+- USE_DIRECT_URLS: true
+- ENABLE_DOMAIN_CHECK: false
+- ENABLE_RATE_LIMITING: true
+- Avatar size: Size150x150 (Enum.ThumbnailSize)
 
 ## Testing Approach
 

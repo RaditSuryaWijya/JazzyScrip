@@ -464,7 +464,7 @@ local colors = {
 local windowSize = UDim2.new(0, 420, 0, 280)
 local minWindowSize = Vector2.new(380, 250)
 local maxWindowSize = Vector2.new(550, 400)
-local sidebarWidth = 140
+local sidebarWidth = 160
 
 local gui = new("ScreenGui", {
     Name = GUI_IDENTIFIER,
@@ -479,6 +479,7 @@ local function bringToFront()
     gui.DisplayOrder = 2147483647
 end
 
+-- Main Window
 -- Main Window
 local win = new("Frame", {
     Parent = gui,
@@ -498,6 +499,26 @@ new("UIStroke", {
     Transparency = 0.9,
     ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 })
+
+-- [[ FIX: AUTO SCALE UNTUK LAYAR 2K/4K ]] --
+local uiScale = Instance.new("UIScale")
+uiScale.Parent = win
+
+local function updateScale()
+    local camera = workspace.CurrentCamera
+    local viewport = camera.ViewportSize
+    
+    -- Base resolution height: 1080p
+    -- Jika layar 1440p (2K), scale jadi 1.33x
+    -- Jika layar hp kecil, scale menyesuaikan agar tidak terlalu kecil
+    local scaleFactor = math.clamp(viewport.Y / 900, 0.85, 1.5) 
+    
+    uiScale.Scale = scaleFactor
+end
+
+workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
+updateScale() -- Jalankan saat start
+-- [[ END FIX ]] --
 
 -- Sidebar
 local sidebar = new("Frame", {
@@ -740,6 +761,8 @@ local function createNavButton(text, icon, page, order)
     })
     new("UICorner", {Parent = indicator, CornerRadius = UDim.new(1, 0)})
     
+-- ... (kode sebelumnya di dalam createNavButton) ...
+
     local iconLabel = new("TextLabel", {
         Parent = btn,
         Text = icon,
@@ -747,7 +770,7 @@ local function createNavButton(text, icon, page, order)
         Position = UDim2.new(0, 10, 0, 0),
         BackgroundTransparency = 1,
         Font = Enum.Font.GothamBold,
-        TextSize = 15,
+        TextSize = 20, -- [UBAH DARI 15 KE 20] Agar icon lebih jelas
         TextColor3 = page == currentPage and colors.primary or colors.textDim,
         TextTransparency = page == currentPage and 0 or 0.3,
         ZIndex = 7
@@ -760,12 +783,14 @@ local function createNavButton(text, icon, page, order)
         Position = UDim2.new(0, 40, 0, 0),
         BackgroundTransparency = 1,
         Font = Enum.Font.GothamBold,
-        TextSize = 10,
+        TextSize = 13, -- [UBAH DARI 10 KE 13] Agar teks tab terbaca di 2K
         TextColor3 = page == currentPage and colors.text or colors.textDim,
         TextTransparency = page == currentPage and 0.1 or 0.4,
         TextXAlignment = Enum.TextXAlignment.Left,
         ZIndex = 7
     })
+
+-- ... (sisa kode) ...
     
     btn.MouseEnter:Connect(function()
         if page ~= currentPage then

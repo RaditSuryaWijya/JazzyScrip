@@ -71,6 +71,17 @@ local CONFIG = {
 
 **Pattern**: Centralized configuration object
 
+### 6. Avatar URL Fetching Pattern
+```lua
+local function getUserAvatarUrl(userId)
+    -- Method 1: GetUserThumbnailAsync (official)
+    -- Method 2: Thumbnail API + JSON parse
+    -- Method 3: Direct URL fallback
+end
+```
+
+**Pattern**: Multiple fallback methods untuk reliability, dengan pcall() protection
+
 ## Design Patterns yang Digunakan
 
 ### 1. Module Pattern
@@ -150,8 +161,17 @@ local CONFIG = {
 
 ## Extension Points
 
-1. **New Modules**: Tambah ke encryptedURLs di SecurityLoader
+1. **New Modules**: Tambah ke modulePaths dan encryptedURLs di SecurityLoader
 2. **New GUI**: Implement GUI yang mengontrol module state
 3. **New Features**: Ikuti module pattern yang sudah ada
 4. **New Security**: Extend SecurityLoader dengan layer baru
+5. **Avatar Integration**: Reuse getUserAvatarUrl() untuk UI personalization
+
+## Recent Pattern Additions
+
+### Avatar Integration Pattern
+- getUserAvatarUrl() function untuk fetching user avatar
+- Used in: minimize icon, notification icon, loading notification icon
+- Implementation dengan 3-tier fallback untuk maximum compatibility
+- Returns URL string untuk Image/ImageLabel properties
 
