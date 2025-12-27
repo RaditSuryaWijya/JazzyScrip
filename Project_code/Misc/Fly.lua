@@ -83,32 +83,38 @@ game:GetService("RunService").RenderStepped:Connect(function()
         local camera = workspace.CurrentCamera
         if not camera then return end
 
-        moveVector = Vector3.new(0, 0, 0)
+        local horizontalMove = Vector3.new(0, 0, 0)
+        local verticalMove = Vector3.new(0, 0, 0)
 
         if keys.W then
-            moveVector = moveVector + camera.cframe.LookVector
+            horizontalMove = horizontalMove + camera.cframe.LookVector
         end
         if keys.S then
-            moveVector = moveVector - camera.cframe.LookVector
+            horizontalMove = horizontalMove - camera.cframe.LookVector
         end
         if keys.D then
-            moveVector = moveVector + camera.cframe.RightVector
+            horizontalMove = horizontalMove + camera.cframe.RightVector
         end
         if keys.A then
-            moveVector = moveVector - camera.cframe.RightVector
+            horizontalMove = horizontalMove - camera.cframe.RightVector
         end
+        
         if keys.Space then
-            moveVector = moveVector + Vector3.new(0, 1, 0)
+            verticalMove = Vector3.new(0, 1, 0)
         end
         if keys.LeftControl then
-            moveVector = moveVector - Vector3.new(0, 1, 0)
+            verticalMove = Vector3.new(0, -1, 0)
         end
 
-        if moveVector.Magnitude > 0 then
-            bodyVelocity.Velocity = moveVector.Unit * speed
-        else
-            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        local finalVelocity = Vector3.new(0, 0, 0)
+        if horizontalMove.Magnitude > 0 then
+            finalVelocity = finalVelocity + horizontalMove.Unit * speed
         end
+        if verticalMove.Magnitude > 0 then
+            finalVelocity = finalVelocity + verticalMove * verticalSpeed
+        end
+
+        bodyVelocity.Velocity = finalVelocity
         
         bodyGyro.cframe = camera.cframe
     end
