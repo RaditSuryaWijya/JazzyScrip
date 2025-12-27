@@ -56,13 +56,51 @@ local function new(class, props)
     return inst
 end
 
+-- Fungsi untuk mendapatkan avatar URL user (dipindah ke atas untuk digunakan di notification)
+local function getUserAvatarUrl(userId)
+    -- Method 1: Coba gunakan GetUserThumbnailAsync jika tersedia (lebih reliable)
+    -- GetUserThumbnailAsync mengembalikan 2 nilai: thumbnailUrl dan isFinal
+    local success, result = pcall(function()
+        local url, isFinal = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+        return url
+    end)
+    
+    if success and result and result ~= "" then
+        return result
+    end
+    
+    -- Method 2: Request dari Thumbnail API dan parse JSON
+    local HttpService = game:GetService("HttpService")
+    if HttpService then
+        local apiUrl = string.format("https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=%d&size=150x150&format=Png&isCircular=false", userId)
+        local httpSuccess, response = pcall(function()
+            return game:HttpGet(apiUrl, true)
+        end)
+        
+        if httpSuccess and response then
+            local decodeSuccess, data = pcall(function()
+                return HttpService:JSONDecode(response)
+            end)
+            
+            if decodeSuccess and data and data.data and data.data[1] and data.data[1].imageUrl then
+                return data.data[1].imageUrl
+            end
+        end
+    end
+    
+    -- Method 3: Fallback ke format URL langsung (mungkin tidak selalu bekerja)
+    return string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=150&height=150&format=png", userId)
+end
+
 local function SendNotification(title, text, duration)
     pcall(function()
+        -- Dapatkan avatar URL user untuk icon notification
+        local avatarUrl = getUserAvatarUrl(localPlayer.UserId)
         StarterGui:SetCore("SendNotification", {
             Title = title,
             Text = text,
             Duration = duration or 5,
-            Icon = "rbxassetid://118176705805619"
+            Icon = avatarUrl
         })
     end)
 end
@@ -102,12 +140,14 @@ function LoadingNotification.Create()
         })
         new("UICorner", {Parent = notifFrame, CornerRadius = UDim.new(0, 16)})
         
+        -- Dapatkan avatar URL user untuk loading notification icon
+        local avatarUrl = getUserAvatarUrl(localPlayer.UserId)
         new("ImageLabel", {
             Parent = notifFrame,
             Size = UDim2.new(0, 45, 0, 45),
             Position = UDim2.new(0, 18, 0, 12),
             BackgroundTransparency = 1,
-            Image = "rbxassetid://118176705805619",
+            Image = avatarUrl,
             ScaleType = Enum.ScaleType.Fit,
             ZIndex = 3
         })
@@ -2980,42 +3020,6 @@ end)
 local minimized = false
 local icon
 local savedIconPos = UDim2.new(0, 20, 0, 100)
-
--- Fungsi untuk mendapatkan avatar URL user
-local function getUserAvatarUrl(userId)
-    -- Method 1: Coba gunakan GetUserThumbnailAsync jika tersedia (lebih reliable)
-    -- GetUserThumbnailAsync mengembalikan 2 nilai: thumbnailUrl dan isFinal
-    local success, result = pcall(function()
-        local url, isFinal = Players:GetUserThumbnailAsync(userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
-        return url
-    end)
-    
-    if success and result and result ~= "" then
-        return result
-    end
-    
-    -- Method 2: Request dari Thumbnail API dan parse JSON
-    local HttpService = game:GetService("HttpService")
-    if HttpService then
-        local apiUrl = string.format("https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=%d&size=150x150&format=Png&isCircular=false", userId)
-        local httpSuccess, response = pcall(function()
-            return game:HttpGet(apiUrl, true)
-        end)
-        
-        if httpSuccess and response then
-            local decodeSuccess, data = pcall(function()
-                return HttpService:JSONDecode(response)
-            end)
-            
-            if decodeSuccess and data and data.data and data.data[1] and data.data[1].imageUrl then
-                return data.data[1].imageUrl
-            end
-        end
-    end
-    
-    -- Method 3: Fallback ke format URL langsung (mungkin tidak selalu bekerja)
-    return string.format("https://www.roblox.com/headshot-thumbnail/image?userId=%d&width=150&height=150&format=png", userId)
-end
 
 local function createMinimizedIcon()
     if icon then return end
