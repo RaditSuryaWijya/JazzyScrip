@@ -268,6 +268,8 @@ local function send(fish, meta, extra)
     }
     
     local payload = {
+        ["username"] = playerName, -- Nama Bot diubah menjadi nama pemain
+        ["avatar_url"] = playerAvatarUrl,    -- Avatar Bot = Avatar Player
         embeds = {{
             author = {
                 name = "Jazzyx Webhook | Fish Caught"
