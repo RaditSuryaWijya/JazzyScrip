@@ -85,6 +85,23 @@ local function getPlayerDisplayName()
     return LocalPlayer.DisplayName or LocalPlayer.Name
 end
 
+local function getPlayerAvatar()
+    local userId = LocalPlayer.UserId
+    local thumbAPI = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds="..userId.."&size=420x420&format=Png&isCircular=false"
+    local avatarUrl = "https://i.imgur.com/4M7IwwP.png" -- Fallback
+    
+    if httpRequest then
+        local success, response = pcall(function() return httpRequest({Url=thumbAPI, Method="GET"}) end)
+        if success and response and response.Body then
+            local data = HttpService:JSONDecode(response.Body)
+            if data and data.data and data.data[1] and data.data[1].imageUrl then
+                avatarUrl = data.data[1].imageUrl
+            end
+        end
+    end
+    return avatarUrl
+end
+
 local function getDiscordImageUrl(assetId)
     if not assetId then return nil end
     
@@ -268,8 +285,8 @@ local function send(fish, meta, extra)
     }
     
     local payload = {
-        username = playerName, -- Nama Bot diubah menjadi nama pemain
-        avatar_url = playerAvatarUrl,    -- Avatar Bot = Avatar Player
+        username = playerDisplayName, -- Nama Bot diubah menjadi nama pemain
+        avatar_url = getPlayerAvatar(),    -- Avatar Bot = Avatar Player
         embeds = {{
             author = {
                 name = "Jazzy Webhook | Fish Caught"
