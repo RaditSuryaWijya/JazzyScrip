@@ -256,7 +256,8 @@ local function send(fish, meta, extra)
     end
     
  
-    local chanceText = (fish.Probability.Chance > 0) and ("1 in " .. formatNumber(fish.Probability.Chance)) or "Unknown"
+    local chanceVal = (fish.Probability.Chance > 0) and (1 / fish.Probability.Chance) or 0
+    local chanceText = (chanceVal > 0) and ("1 in " .. formatNumber(chanceVal)) or "Unknown"
     local imageUrl = getFishImageUrl(fish)
     local playerDisplayName = getPlayerDisplayName()
     local mention = WebhookModule.Config.DiscordUserID ~= "" and "<@" .. WebhookModule.Config.DiscordUserID .. "> " or ""
