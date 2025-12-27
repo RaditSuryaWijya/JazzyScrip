@@ -726,7 +726,9 @@ local function createPage(name)
 end
 
 -- Create Pages
-local mainPage = createPage("Main")
+local autoFishingPage = createPage("AutoFishing")
+local supportPage = createPage("Support")
+local totemPage = createPage("Totem")
 local teleportPage = createPage("Teleport")
 local shopPage = createPage("Shop")
 local webhookPage = createPage("Webhook")
@@ -734,7 +736,7 @@ local cameraViewPage = createPage("CameraView")
 local settingsPage = createPage("Settings")
 local infoPage = createPage("Info")
 local miscPage = createPage("Misc")
-mainPage.Visible = true
+autoFishingPage.Visible = true
 
 -- Navigation Button
 local function createNavButton(text, icon, page, order)
@@ -841,18 +843,22 @@ local function switchPage(pageName, pageTitle_text)
 end
 
 -- Create Nav Buttons
-local btnMain = createNavButton("Dashboard", "🏠", "Main", 1)
+local btnAutoFishing = createNavButton("Auto Fishing", "🎣", "AutoFishing", 1)
 local btnTeleport = createNavButton("Teleport", "🌍", "Teleport", 2)
 local btnShop = createNavButton("Shop", "🛒", "Shop", 3)
-local btnWebhook = createNavButton("Webhook", "🔗", "Webhook", 4)
-local btnCameraView = createNavButton("Camera View", "📷", "CameraView", 5)
-local btnSettings = createNavButton("Settings", "⚙️", "Settings", 6)
-local btnInfo = createNavButton("About", "ℹ️", "Info", 7)
-local btnMisc = createNavButton("Misc", "✨", "Misc", 8)
+local btnSupport = createNavButton("Support", "🛠️", "Support", 4)
+local btnTotem = createNavButton("Totem", "🗿", "Totem", 5)
+local btnWebhook = createNavButton("Webhook", "🔗", "Webhook", 6)
+local btnCameraView = createNavButton("Camera View", "📷", "CameraView", 7)
+local btnSettings = createNavButton("Settings", "⚙️", "Settings", 8)
+local btnInfo = createNavButton("About", "ℹ️", "Info", 9)
+local btnMisc = createNavButton("Misc", "✨", "Misc", 10)
 
-btnMain.MouseButton1Click:Connect(function() switchPage("Main", "Main Dashboard") end)
+btnAutoFishing.MouseButton1Click:Connect(function() switchPage("AutoFishing", "Auto Fishing") end)
 btnTeleport.MouseButton1Click:Connect(function() switchPage("Teleport", "Teleport System") end)
 btnShop.MouseButton1Click:Connect(function() switchPage("Shop", "Shop Features") end)
+btnSupport.MouseButton1Click:Connect(function() switchPage("Support", "Support Features") end)
+btnTotem.MouseButton1Click:Connect(function() switchPage("Totem", "Auto Spawn 3X Totem") end)
 btnWebhook.MouseButton1Click:Connect(function() switchPage("Webhook", "Webhook Page") end)
 btnCameraView.MouseButton1Click:Connect(function() switchPage("CameraView", "Camera View Settings") end)
 btnSettings.MouseButton1Click:Connect(function() switchPage("Settings", "Settings") end)
@@ -1522,7 +1528,7 @@ local ToggleReferences = {}
 -- ============================================
 -- AUTO FISHING
 -- ============================================
-local catAutoFishing = makeCategory(mainPage, "Auto Fishing", "🎣")
+local catAutoFishing = makeCategory(autoFishingPage, "Auto Fishing", "🎣")
 
 local savedInstantMode = GetConfigValue("InstantFishing.Mode", "Fast")
 local savedFishingDelay = GetConfigValue("InstantFishing.FishingDelay", 1.30)
@@ -1634,7 +1640,7 @@ end)
 -- ============================================
 
 -- Blatant Tester
-local catBlatantV2 = makeCategory(mainPage, "Blatant Tester", "🎯")
+local catBlatantV2 = makeCategory(autoFishingPage, "Blatant Tester", "🎯")
 
 local savedBlatantTesterCompleteDelay = GetConfigValue("BlatantTester.CompleteDelay", 0.5)
 local savedBlatantTesterCancelDelay = GetConfigValue("BlatantTester.CancelDelay", 0.1)
@@ -1672,7 +1678,7 @@ makeInput(catBlatantV2, "Cancel Delay", savedBlatantTesterCancelDelay, function(
 end)
 
 -- Blatant V1
-local catBlatantV1 = makeCategory(mainPage, "Blatant V1", "💀")
+local catBlatantV1 = makeCategory(autoFishingPage, "Blatant V1", "💀")
 
 local savedBlatantV1CompleteDelay = GetConfigValue("BlatantV1.CompleteDelay", 0.05)
 local savedBlatantV1CancelDelay = GetConfigValue("BlatantV1.CancelDelay", 0.1)
@@ -1712,7 +1718,7 @@ end)
 -- Part 4/8: More Blatant Modes & Support Features
 
 -- Ultra Blatant V2
-local catUltraBlatant = makeCategory(mainPage, "Blatant V2", "⚡")
+local catUltraBlatant = makeCategory(autoFishingPage, "Blatant V2", "⚡")
 
 local savedUltraBlatantCompleteDelay = GetConfigValue("UltraBlatant.CompleteDelay", 0.05)
 local savedUltraBlatantCancelDelay = GetConfigValue("UltraBlatant.CancelDelay", 0.1)
@@ -1766,7 +1772,7 @@ makeInput(catUltraBlatant, "Cancel Delay", savedUltraBlatantCancelDelay, functio
 end)
 
 -- Fast Auto Fishing Perfect
-local catBlatantV2Fast = makeCategory(mainPage, "Fast Auto Fishing Perfect", "🔥")
+local catBlatantV2Fast = makeCategory(autoFishingPage, "Fast Auto Fishing Perfect", "🔥")
 
 ToggleReferences.FastAutoPerfect = makeToggle(catBlatantV2Fast, "Fast Fishing Features", function(on)
     SetConfigValue("FastAutoPerfect.Enabled", on)
@@ -1801,7 +1807,7 @@ end)
 -- ============================================
 -- SUPPORT FEATURES
 -- ============================================
-local catSupport = makeCategory(mainPage, "Support Features", "🛠️")
+local catSupport = makeCategory(supportPage, "Support Features", "🛠️")
 
 ToggleReferences.NoFishingAnimation = makeToggle(catSupport, "No Fishing Animation", function(on)
     SetConfigValue("Support.NoFishingAnimation", on)
@@ -1906,7 +1912,7 @@ end)
 -- ============================================
 -- AUTO FAVORITE (MINIMAL)
 -- ============================================
-local catAutoFav = makeCategory(mainPage, "Auto Favorite", "⭐")
+local catAutoFav = makeCategory(autoFishingPage, "Auto Favorite", "⭐")
 local AutoFavorite = GetModule("AutoFavorite")
 
 if AutoFavorite then
@@ -1922,7 +1928,7 @@ if AutoFavorite then
 end
 
 --auto totem
-local catAutoTotem = makeCategory(mainPage, "Auto Spawn 3X Totem", "🛠️")
+local catAutoTotem = makeCategory(totemPage, "Auto Spawn 3X Totem", "🛠️")
 
 makeButton(catAutoTotem, "Auto Totem 3X", function()
     local AutoTotem3X = GetModule("AutoTotem3X")
@@ -1941,7 +1947,7 @@ makeButton(catAutoTotem, "Auto Totem 3X", function()
     end
 end)
 
-local catSkin = makeCategory(mainPage, "Skin Animation", "✨")
+local catSkin = makeCategory(settingsPage, "Skin Animation", "✨")
 
 makeButton(catSkin, "⚔️ Eclipse Katana", function()
     local SkinAnimation = GetModule("SkinAnimation")
