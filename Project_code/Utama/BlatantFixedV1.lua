@@ -1,5 +1,5 @@
--- ⚠️ BLATANT V2 AUTO FISHING - SMART LOGIC EDITION
--- FIX: Ghost Cast (Kosong ditarik) & Stuck (Tidak mau Charge)
+-- ⚠️ BLATANT V2 - STABLE FAST EDITION
+-- Tuned for Speed WITHOUT crashing/stuck
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
@@ -26,21 +26,14 @@ BlatantV2.Stats = {
     startTime = 0
 }
 
--- [[ PENGATURAN LOGIKA BARU ]]
+-- [[ PENGATURAN "SWEET SPOT" ]]
+-- Settingan ini seimbang antara Kecepatan dan Kestabilan Server
 BlatantV2.Settings = {
-    ChargeDelay = 0.15,   -- Waktu tahan klik (Wajib ada agar server baca)
-    CompleteDelay = 0.05, -- Jeda sebelum tarik
-    CancelDelay = 0.15,   -- Jeda sebelum reset
-    PostCastDelay = 0.1   -- Jeda napas antar putaran
+    ChargeDelay = 0.15,   -- Waktu tahan pancingan (Jangan di bawah 0.1!)
+    CompleteDelay = 0.05, -- Jeda instan sebelum tarik
+    CancelDelay = 0.15,   -- Jeda reset animasi
+    PostCastDelay = 0.1   -- Jeda napas antar lemparan
 }
-
--- Helper untuk menjalankan fungsi tanpa memblokir thread utama, tapi bisa mengembalikan nilai jika perlu
-local function safeInvoke(remote, args)
-    local success, result = pcall(function()
-        return remote:InvokeServer(unpack(args or {}))
-    end)
-    return success and result
-end
 
 local function safeFire(remote, args)
     task.spawn(function()
@@ -50,67 +43,69 @@ local function safeFire(remote, args)
     end)
 end
 
+local function safeInvoke(remote, args)
+    local success, result = pcall(function()
+        return remote:InvokeServer(unpack(args or {}))
+    end)
+    return success and result
+end
+
 local function ultraSpamLoop()
     while BlatantV2.Active do
         local startTime = tick()
         
-        -- 1. CHARGE (Mulai Tahan)
-        -- Kita fire event ini, server akan mencatat kita sedang siap melempar
-        safeInvoke(RF_ChargeFishingRod, {{[1] = startTime}})
+        -- 1. CHARGE (Mulai)
+        -- Gunakan FireServer agar lebih cepat, tidak perlu menunggu balasan
+        safeFire(RF_ChargeFishingRod, {[1] = startTime})
         
-        -- Tunggu sebentar agar server memproses status "Charging"
+        -- Tunggu agar server sadar kita sedang charging
         task.wait(BlatantV2.Settings.ChargeDelay)
         
-        -- 2. REQUEST MINIGAME (Lepas/Lempar)
+        -- 2. LEMPAR (Request Minigame)
         local releaseTime = tick()
         
-        -- [[ LOGIKA PENTING DI SINI ]] --
-        -- Kita gunakan InvokeServer (bukan Fire) agar kita tahu apakah lemparan BERHASIL atau GAGAL
+        -- Kita WAJIB pakai InvokeServer di sini untuk memastikan lemparan valid
         local castResult = RF_RequestMinigame:InvokeServer(1, 0, releaseTime)
         
-        -- Cek apakah server menerima lemparan kita?
+        -- 3. LOGIKA SMART (Anti-Ghost & Anti-Stuck)
         if castResult then
-            -- A. JIKA SUKSES LEMPAR -> LANJUT TARIK
+            -- [SUKSES] Pancingan terlempar
             BlatantV2.Stats.castCount = BlatantV2.Stats.castCount + 1
             BlatantV2.Stats.perfectCasts = BlatantV2.Stats.perfectCasts + 1
             
-            -- Tunggu sebentar (simulasi minigame instan)
+            -- Tunggu sebentar (simulasi reflex manusia super cepat)
             task.wait(BlatantV2.Settings.CompleteDelay)
             
-            -- Selesaikan Minigame (Tarik Ikan)
+            -- Tarik Ikan
             safeFire(RE_FishingCompleted)
             
-            -- Tunggu sebentar sebelum reset posisi
+            -- Tunggu reset
             task.wait(BlatantV2.Settings.CancelDelay)
-            
-            -- Reset Posisi (Cancel Animation)
-            safeInvoke(RF_CancelFishingInputs)
+            safeFire(RF_CancelFishingInputs)
         else
-            -- B. JIKA GAGAL LEMPAR (Stuck/Server Lag)
-            -- Jangan kirim FishingCompleted! Langsung paksa reset agar tidak stuck.
+            -- [GAGAL] Server menolak lemparan (biasanya karena cooldown/lag)
+            -- Jangan tarik ikan! Langsung reset paksa.
+            safeFire(RF_CancelFishingInputs)
             
-            -- Force Reset
-            safeInvoke(RF_CancelFishingInputs)
-            
-            -- Tunggu lebih lama sedikit agar server "bernapas"
-            task.wait(0.2)
+            -- Beri hukuman waktu sedikit agar server tidak spam error
+            task.wait(0.25) 
         end
 
-        -- Jeda Aman Antar Putaran (Wajib ada agar tidak desync lagi)
+        -- Jeda Napas (Penting agar Ping tidak naik)
         task.wait(BlatantV2.Settings.PostCastDelay)
     end
 end
 
--- Backup listener (Hanya aktif jika script macet total)
+-- Backup Listener (Jaga-jaga jika script macet)
 RE_MinigameChanged.OnClientEvent:Connect(function(state)
     if not BlatantV2.Active then return end
     
-    -- Jika tiba-tiba muncul minigame (berarti loop di atas lolos), selesaikan saja
+    -- Jika tiba-tiba muncul UI minigame (artinya loop di atas lolos)
     if type(state) == "string" and state:lower():find("hook") then
         task.wait(BlatantV2.Settings.CompleteDelay)
         safeFire(RE_FishingCompleted)
         task.wait(BlatantV2.Settings.CancelDelay)
-        safeInvoke(RF_CancelFishingInputs)
+        safeFire(RF_CancelFishingInputs)
     end
 end)
 
@@ -129,11 +124,11 @@ function BlatantV2.Start()
     BlatantV2.Stats.perfectCasts = 0
     BlatantV2.Stats.startTime = tick()
     
-    print("🎯 Blatant V2 (Smart Logic) Started")
+    print("🎯 Blatant V2 (Stable-Fast) Started")
     
-    -- Pastikan status bersih sebelum mulai
-    safeInvoke(RF_CancelFishingInputs)
-    task.wait(0.2)
+    -- Reset status karakter sebelum mulai
+    safeFire(RF_CancelFishingInputs)
+    task.wait(0.25)
     
     task.spawn(ultraSpamLoop)
 end
@@ -142,14 +137,14 @@ function BlatantV2.Stop()
     if not BlatantV2.Active then return end
     BlatantV2.Active = false
     
-    -- Aktifkan kembali auto-fishing bawaan game
-    safeInvoke(RF_UpdateAutoFishingState, {true})
+    -- Aktifkan kembali auto-fishing bawaan game agar rod tidak bug
+    safeFire(RF_UpdateAutoFishingState, {true})
     task.wait(0.2)
     
-    -- Reset posisi akhir
-    safeInvoke(RF_CancelFishingInputs)
+    -- Reset posisi
+    safeFire(RF_CancelFishingInputs)
     
-    print("🎣 Stopped. Total Casts: " .. BlatantV2.Stats.castCount)
+    print("🎣 Stopped. Total: " .. BlatantV2.Stats.castCount)
 end
 
 return BlatantV2
