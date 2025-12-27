@@ -262,8 +262,14 @@ local function send(fish, meta, extra)
     local mention = WebhookModule.Config.DiscordUserID ~= "" and "<@" .. WebhookModule.Config.DiscordUserID .. "> " or ""
     
     local fishName = fish.Data.Name
-    if fish.Weight and fish.Weight.Big and meta.Weight and meta.Weight >= fish.Weight.Big then
-        fishName = "Big " .. fishName
+    if fish.Weight and fish.Weight.Big and meta.Weight then
+        local bigThreshold = fish.Weight.Big
+        if typeof(bigThreshold) == "NumberRange" then
+            bigThreshold = bigThreshold.Min
+        end
+        if type(bigThreshold) == "number" and meta.Weight >= bigThreshold then
+            fishName = "Big " .. fishName
+        end
     end
 
     local congratsMsg = string.format(
