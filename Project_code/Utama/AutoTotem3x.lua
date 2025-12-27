@@ -16,7 +16,7 @@ local RE_SpawnTotem = Net:WaitForChild("RE/SpawnTotem")
 -- ============================================
 -- ID Totem (Ganti sesuai kebutuhan):
 -- 1 = Luck, 2 = Mutation, 3 = Shiny, 11 = Sundial, 12 = Aurora, 10 = Windset
-local TARGET_TOTEM_ID = 11 -- Default: Sundial (Contoh)
+local TARGET_TOTEM_ID = 2 -- Default: Sundial (Contoh)
 
 local TRIANGLE_RADIUS = 58   -- Jarak menyebar (Horizontal)
 local VERTICAL_OFFSET = 100  -- Jarak tinggi (Y Axis)
