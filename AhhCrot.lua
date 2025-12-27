@@ -866,6 +866,72 @@ btnInfo.MouseButton1Click:Connect(function() switchPage("Info", "About Jazzy") e
 btnMisc.MouseButton1Click:Connect(function() switchPage("Misc", "Misc Features") end)
 
 -- ============================================
+-- WEBHOOK PAGE SETUP
+-- ============================================
+local catWebhook = makeCategory(webhookPage, "Webhook Settings", "🔗")
+
+local webhookURLInput = makeInput(catWebhook, "Webhook URL", GetConfigValue("Webhook.URL", ""), function(value)
+    SetConfigValue("Webhook.URL", value)
+    SaveCurrentConfig()
+    local Webhook = GetModule("Webhook")
+    if Webhook then
+        Webhook:SetWebhookURL(value)
+    end
+end)
+
+local discordIDInput = makeInput(catWebhook, "Discord User ID (Optional)", GetConfigValue("Webhook.DiscordID", ""), function(value)
+    SetConfigValue("Webhook.DiscordID", value)
+    SaveCurrentConfig()
+    local Webhook = GetModule("Webhook")
+    if Webhook then
+        Webhook:SetDiscordUserID(value)
+    end
+end)
+
+task.spawn(function()
+    task.wait(1)
+    local Webhook = GetModule("Webhook")
+    if Webhook then
+        local initialUrl = GetConfigValue("Webhook.URL", "")
+        local initialId = GetConfigValue("Webhook.DiscordID", "")
+        Webhook:SetWebhookURL(initialUrl)
+        Webhook:SetDiscordUserID(initialId)
+        
+        local allTiers = Webhook:GetTierNames()
+        if allTiers then
+            local rarityChecklist = makeCheckboxDropdown(catWebhook, "Rarity Filter", allTiers, TIER_COLORS, function(selection)
+                SetConfigValue("Webhook.EnabledRarities", selection)
+                SaveCurrentConfig()
+                Webhook:SetEnabledRarities(selection)
+            end)
+            
+            local savedRarities = GetConfigValue("Webhook.EnabledRarities", {"Epic", "Legendary", "Mythic", "SECRET"})
+            rarityChecklist.SelectSpecific(savedRarities)
+            Webhook:SetEnabledRarities(savedRarities)
+        end
+    end
+end)
+
+ToggleReferences.EnableWebhooks = makeToggle(catWebhook, "Enable Webhook Monitor", function(on)
+    SetConfigValue("Webhook.Enabled", on)
+    SaveCurrentConfig()
+    local Webhook = GetModule("Webhook")
+    local Notify = GetModule("Notify")
+    if Webhook then
+        if on then
+            local success = Webhook:Start()
+            if not success and Notify then
+                Notify.Send("Webhook Failed", "Could not start. Is the Webhook URL correct and are rarities selected?", 5)
+                ToggleReferences.EnableWebhooks.setOn(false, true) -- Revert toggle without firing callback
+            end
+        else
+            Webhook:Stop()
+        end
+    end
+end)
+
+
+-- ============================================
 -- UI COMPONENTS
 -- ============================================
 
