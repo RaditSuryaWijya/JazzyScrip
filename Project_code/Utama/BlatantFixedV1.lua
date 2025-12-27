@@ -52,10 +52,10 @@ local function ultraSpamLoop()
             RF_ChargeFishingRod:InvokeServer({[1] = startTime})
         end)
         
-        -- 2. Wait for perfect timing (ChargeDelay)
+        -- 2. Wait for perfect timing
         task.wait(BlatantV2.Settings.ChargeDelay)
         
-        -- 3. Release at perfect timing
+        -- 3. Release
         local releaseTime = tick()
         safeFire(function()
             RF_RequestMinigame:InvokeServer(1, 0, releaseTime)
@@ -64,18 +64,21 @@ local function ultraSpamLoop()
         BlatantV2.Stats.castCount = BlatantV2.Stats.castCount + 1
         BlatantV2.Stats.perfectCasts = BlatantV2.Stats.perfectCasts + 1
         
-        -- 4. Wait CompleteDelay then fire complete
+        -- 4. Complete
         task.wait(BlatantV2.Settings.CompleteDelay)
-        
         safeFire(function()
             RE_FishingCompleted:FireServer()
         end)
         
-        -- 5. Cancel with CancelDelay
+        -- 5. Cancel
         task.wait(BlatantV2.Settings.CancelDelay)
         safeFire(function()
             RF_CancelFishingInputs:InvokeServer()
         end)
+
+        -- [[ TAMBAHAN ]] --
+        -- Tunggu 1 frame agar network tidak tersedak
+        task.wait() 
     end
 end
 
