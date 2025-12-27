@@ -1895,77 +1895,6 @@ ToggleReferences.GoodPerfectionStable = makeToggle(catSupport, "Good/Perfection 
 end)
 
 -- ============================================
--- WEBHOOK PAGE SETUP
--- ============================================
-local catWebhook = makeCategory(webhookPage, "Webhook Settings", "🔗")
-
-local webhookURLInput = makeInput(catWebhook, "Webhook URL", GetConfigValue("Webhook.URL", ""), function(value)
-    SetConfigValue("Webhook.URL", value)
-    SaveCurrentConfig()
-    local Webhook = GetModule("Webhook")
-    if Webhook then
-        Webhook:SetWebhookURL(value)
-    end
-end)
-
-local discordIDInput = makeInput(catWebhook, "Discord User ID (Optional)", GetConfigValue("Webhook.DiscordID", ""), function(value)
-    SetConfigValue("Webhook.DiscordID", value)
-    SaveCurrentConfig()
-    local Webhook = GetModule("Webhook")
-    if Webhook then
-        Webhook:SetDiscordUserID(value)
-    end
-end)
-
-task.spawn(function()
-    task.wait(1)
-    local Webhook = GetModule("Webhook")
-    if Webhook then
-        local initialUrl = GetConfigValue("Webhook.URL", "")
-        local initialId = GetConfigValue("Webhook.DiscordID", "")
-        Webhook:SetWebhookURL(initialUrl)
-        Webhook:SetDiscordUserID(initialId)
-        
-        local allTiers = Webhook:GetTierNames()
-        if allTiers and #allTiers > 0 then
-            local TIER_COLORS_WEBHOOK = {
-                Common = 9807270, Uncommon = 3066993, Rare = 3447003, 
-                Epic = 10181046, Legendary = 15844367, Mythic = 15548997, SECRET = 65450
-            }
-            local rarityChecklist = makeCheckboxDropdown(catWebhook, "Rarity Filter", allTiers, TIER_COLORS_WEBHOOK, function(selection)
-                SetConfigValue("Webhook.EnabledRarities", selection)
-                SaveCurrentConfig()
-                Webhook:SetEnabledRarities(selection)
-            end)
-            
-            local savedRarities = GetConfigValue("Webhook.EnabledRarities", {"Epic", "Legendary", "Mythic", "SECRET"})
-            rarityChecklist.SelectSpecific(savedRarities)
-            Webhook:SetEnabledRarities(savedRarities)
-        end
-    end
-end)
-
-ToggleReferences.EnableWebhooks = makeToggle(catWebhook, "Enable Webhook Monitor", function(on)
-    SetConfigValue("Webhook.Enabled", on)
-    SaveCurrentConfig()
-    local Webhook = GetModule("Webhook")
-    local Notify = GetModule("Notify")
-    if Webhook then
-        if on then
-            local success = Webhook:Start()
-            if not success and Notify then
-                Notify.Send("Webhook Failed", "Could not start. Is the URL correct and rarities selected?", 5)
-                if ToggleReferences.EnableWebhooks then
-                    ToggleReferences.EnableWebhooks.setOn(false, true) -- Revert toggle without firing callback
-                end
-            end
-        else
-            Webhook:Stop()
-        end
-    end
-end)
-
--- ============================================
 -- MISC FEATURES
 -- ============================================
 local catMisc = makeCategory(miscPage, "Misc Features", "✨")
@@ -2669,86 +2598,15 @@ ToggleReferences.Webhook = makeToggle(catWebhook, "Enable Webhook" .. (not isWeb
     end
 end)
 
--- Toggle Webhook (disabled jika tidak support)
-ToggleReferences.Webhook = makeToggle(catWebhook, "Enable Webhook" .. (not isWebhookSupported and " (Not Supported)" or ""), function(on)
-    -- BLOCK jika tidak support
-    if not isWebhookSupported then
-        SendNotification("Error", "Webhook not supported on this executor!", 3)
-        -- Reset toggle visual ke off
+-- Auto-disable webhook toggle jika tidak support
+if not isWebhookSupported then
+    task.spawn(function()
+        task.wait(0.5)
         if ToggleReferences.Webhook then
-            task.spawn(function()
-                task.wait(0.1)
-                ToggleReferences.Webhook.setOn(false, true)
-            end)
+            ToggleReferences.Webhook.setOn(false, true)
         end
-        return
-    end
-    
-    -- Simpan setting ke config
-    SetConfigValue("Webhook.Enabled", on)
-    SaveCurrentConfig()
-    
-    -- Ambil modul Webhook
-    if not WebhookModule then
-        SendNotification("Error", "Webhook module tidak tersedia!", 3)
-        return
-    end
-    
-    if on then
-        -- Validasi URL sebelum Start
-        if currentWebhookURL == "" then
-            SendNotification("Error", "Masukkan Webhook URL dulu!", 3)
-            -- Reset toggle ke off karena URL kosong
-            if ToggleReferences.Webhook then
-                task.spawn(function()
-                    task.wait(0.1)
-                    ToggleReferences.Webhook.setOn(false, true)
-                end)
-            end
-            return
-        end
-        
-        -- Set Config Modul & Panggil Start()
-        local success = pcall(function()
-            WebhookModule:SetWebhookURL(currentWebhookURL)
-            if currentDiscordID ~= "" then
-                WebhookModule:SetDiscordUserID(currentDiscordID)
-            end
-            -- Set filter rarity jika ada
-            if rarityCheckboxSystem then
-                local selected = rarityCheckboxSystem.GetSelected()
-                WebhookModule:SetEnabledRarities(selected)
-            end
-            
-            -- [[ PANGGIL FUNGSI START DISINI ]] --
-            return WebhookModule:Start() 
-        end)
-        
-        -- Cek hasil Start()
-        if success then
-            -- Info tambahan untuk notifikasi
-            local selected = rarityCheckboxSystem and rarityCheckboxSystem.GetSelected() or {}
-            local filterInfo = #selected > 0 
-                and (" (Filter: " .. table.concat(selected, ", ") .. ")")
-                or " (All rarities)"
-            
-            SendNotification("Webhook", "Webhook logging aktif!" .. filterInfo, 4)
-        else
-            SendNotification("Error", "Gagal mengaktifkan Webhook! (Cek Console F9)", 3)
-            -- Reset toggle jika gagal start
-            if ToggleReferences.Webhook then
-                task.spawn(function()
-                    task.wait(0.1)
-                    ToggleReferences.Webhook.setOn(false, true)
-                end)
-            end
-        end
-    else
-        -- Panggil fungsi Stop() jika toggle dimatikan
-        pcall(function() WebhookModule:Stop() end)
-        SendNotification("Webhook", "Webhook logging dinonaktifkan.", 3)
-    end
-end)
+    end)
+end
 
 -- CAMERA VIEW PAGE
 local catZoom = makeCategory(cameraViewPage, "Unlimited Zoom", "🔍")
