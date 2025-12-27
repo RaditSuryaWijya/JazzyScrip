@@ -48,6 +48,16 @@ WebhookModule.Config = {
 
 local Items, Variants
 
+local function formatNumber(n)
+    if not n then return "0" end
+    n = tonumber(n)
+    if not n then return "0" end
+    local function clean(str) return str:gsub("%.?0+$", "") end
+    if n >= 1000000000 then return clean(string.format("%.2f", n / 1000000000)) .. "B" end
+    if n >= 1000000 then return clean(string.format("%.2f", n / 1000000)) .. "M" end
+    if n >= 1000 then return clean(string.format("%.2f", n / 1000)) .. "k" end
+    return clean(string.format("%.2f", n))
+end
 -- Safe module loading
 local function loadGameModules()
     local success, err = pcall(function()
@@ -245,6 +255,8 @@ local function send(fish, meta, extra)
         end
     end
     
+ 
+    local chanceText = formatNumber(fish.Data.ChanceVal) or "Unknown"
     local imageUrl = getFishImageUrl(fish)
     local playerDisplayName = getPlayerDisplayName()
     local mention = WebhookModule.Config.DiscordUserID ~= "" and "<@" .. WebhookModule.Config.DiscordUserID .. "> " or ""
@@ -273,6 +285,11 @@ local function send(fish, meta, extra)
             inline = false
         },
         {
+            name = "Chance :",
+            value = "> *" .. chanceText .. "*",
+            inline = false
+        },
+        {
             name = "Mutation :",
             value = "> " .. mutationText,
             inline = false
@@ -298,8 +315,7 @@ local function send(fish, meta, extra)
                 url = imageUrl
             },
             footer = {
-                text = "Jazzy Webhook • " .. os.date("%m/%d/%Y %H:%M"),
-                icon_url = "https://i.imgur.com/shnNZuT.png"
+                text = "Jazzy Webhook • " .. os.date("%m/%d/%Y %H:%M")
             },
             timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
         }}
