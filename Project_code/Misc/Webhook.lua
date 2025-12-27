@@ -91,9 +91,36 @@ local TIER_COLORS = {
 local isRunning = false
 local eventConnection = nil
 
+-- AFK & System Status Tracking
+local lastCatchTime = 0
+local lastInputTime = 0
+local idleWarningSent = false
+local userInputConnection = nil
+local afkMonitorThread = nil
+
 local function getPlayerDisplayName()
     return LocalPlayer.DisplayName or LocalPlayer.Name
 end
+
+local function sendSystemWebhook(title, message, color)
+    if not WebhookModule.Config.WebhookURL or WebhookModule.Config.WebhookURL == "" then return end
+    if not httpRequest then return end
+
+    local payload = {
+        username = getPlayerDisplayName(),
+        avatar_url = getPlayerAvatar(),
+        embeds = {{
+            title = title,
+            description = message,
+            color = color or 3447003, -- Default blue
+            footer = {text = "Jazzy Webhook | System Monitor • " .. os.date("%X")}
+        }}
+    }
+    pcall(function()
+        httpRequest({Url = WebhookModule.Config.WebhookURL, Method = "POST", Headers = {["Content-Type"]="application/json"}, Body = HttpService:JSONEncode(payload)})
+    end)
+end
+
 
 local function getPlayerAvatar()
     local userId = LocalPlayer.UserId
@@ -287,10 +314,11 @@ local function send(fish, meta, extra)
     local finalPriceFormated = formatNumber(math.floor(finalPrice))
 
     local congratsMsg = string.format(
-        "%s You have obtained a new **%s** fish: **%s**!",
+        "%s You have obtained a new fish **%s** with rarety **%s**!",
         mention,
-        tier,
-        fishName
+        fishName,
+        tier
+        
     )
     
     local fields = {
@@ -383,57 +411,74 @@ function WebhookModule:GetTierNames()
 end
 
 function WebhookModule:Start()
-    if isRunning then
-        return false
-    end
-    
-    if not self.Config.WebhookURL or self.Config.WebhookURL == "" then
-        return false
-    end
-    
-    if not httpRequest then
-        return false
-    end
-    
-    -- Load game modules
-    if not loadGameModules() then
-        return false
-    end
-    
+    if isRunning then return false end
+    if not self.Config.WebhookURL or self.Config.WebhookURL == "" then return false end
+    if not httpRequest then return false end
+    if not loadGameModules() then return false end
+
     local success, Event = pcall(function()
-        return ReplicatedStorage.Packages
-            ._Index["sleitnick_net@0.2.0"]
-            .net["RE/ObtainedNewFishNotification"]
+        return ReplicatedStorage.Packages._Index["sleitnick_net@0.2.0"].net["RE/ObtainedNewFishNotification"]
     end)
+    if not success or not Event then return false end
     
-    if not success or not Event then
-        return false
-    end
-    
+    isRunning = true
+    lastCatchTime = tick()
+    lastInputTime = tick()
+    idleWarningSent = false
+
+    sendSystemWebhook("🟢 SYSTEM IS ONLINE", "Player: **" .. getPlayerDisplayName() .. "** webhook monitor is now active.", 3066993)
+
+    -- Listen for fish catches
     eventConnection = Event.OnClientEvent:Connect(function(itemId, metadata, extraData)
+        lastCatchTime = tick()
+        idleWarningSent = false
         local fish = getFish(itemId)
         if fish then
-            task.spawn(function()
-                send(fish, metadata, extraData)
-            end)
+            task.spawn(function() send(fish, metadata, extraData) end)
         end
     end)
     
-    isRunning = true
+    -- Listen for user input
+    userInputConnection = game:GetService("UserInputService").InputBegan:Connect(function()
+        lastInputTime = tick()
+        idleWarningSent = false
+    end)
+
+    -- Start AFK monitor
+    afkMonitorThread = task.spawn(function()
+        while isRunning do
+            task.wait(10) -- Check every 10 seconds
+            local currentTime = tick()
+            if currentTime - lastCatchTime > 60 and currentTime - lastInputTime > 60 and not idleWarningSent then
+                sendSystemWebhook(
+                    "⚠️ IDLE ALERT", 
+                    "Akun **" .. getPlayerDisplayName() .. "** terdeteksi:\n> 1. Tidak dapat ikan (>1 menit)\n> 2. Tidak ada input keyboard/mouse (>1 menit)\n\n*Kemungkinan script/macro mati atau karakter tersangkut.*",
+                    16753920
+                )
+                idleWarningSent = true
+            end
+        end
+    end)
+
+    -- Listen for player leaving
+    game.Players.PlayerRemoving:Connect(function(player)
+        if player == LocalPlayer and isRunning then
+            sendSystemWebhook("🔴 SYSTEM IS OFFLINE", "Player: **" .. getPlayerDisplayName() .. "** has left the game.", 15548997)
+        end
+    end)
+
     return true
 end
 
 function WebhookModule:Stop()
-    if not isRunning then
-        return false
-    end
+    if not isRunning then return false end
+    isRunning = false -- This will stop the afkMonitorThread loop
     
-    if eventConnection then
-        eventConnection:Disconnect()
-        eventConnection = nil
-    end
+    if eventConnection then eventConnection:Disconnect(); eventConnection = nil end
+    if userInputConnection then userInputConnection:Disconnect(); userInputConnection = nil end
     
-    isRunning = false
+    sendSystemWebhook("🔴 SYSTEM IS OFFLINE", "Player: **" .. getPlayerDisplayName() .. "** webhook monitor has been manually stopped.", 15548997)
+    
     return true
 end
 
