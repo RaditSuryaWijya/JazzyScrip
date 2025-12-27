@@ -1,302 +1,238 @@
-﻿local WebhookModule = {}
+local WebhookModule = {}
 
+-- Services
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
-local function getHTTPRequest()
-    -- Coba berbagai metode request berdasarkan executor
-    local requestFunctions = {
-        -- Metode standar
-        request,
-        http_request,
-        -- Syn/Synapse
-        (syn and syn.request),
-        -- Fluxus
-        (fluxus and fluxus.request),
-        -- Script-Ware
-        (http and http.request),
-        -- Solara (khusus)
-        (solara and solara.request),
-        -- Fallback lainnya
-        (game and game.HttpGet and function(opts)
-            if opts.Method == "GET" then
-                return {Body = game:HttpGet(opts.Url)}
-            end
-        end)
-    }
-    
-    for _, func in ipairs(requestFunctions) do
-        if func and type(func) == "function" then
-            return func
-        end
-    end
-    
-    return nil
-end
-
-local httpRequest = getHTTPRequest()
-
+-- Configuration Storage
 WebhookModule.Config = {
     WebhookURL = "",
     DiscordUserID = "",
-    DebugMode = false,
     EnabledRarities = {},
-    UseSimpleMode = false -- Mode sederhana tanpa thumbnail API
+    DebugMode = false
 }
 
-local Items, Variants
+-- Game Data
+local ItemsModule = require(ReplicatedStorage:WaitForChild("Items"))
+local VariantsModule = require(ReplicatedStorage:WaitForChild("Variants"))
 
--- Safe module loading
-local function loadGameModules()
-    local success, err = pcall(function()
-        Items = require(ReplicatedStorage:WaitForChild("Items"))
-        Variants = require(ReplicatedStorage:WaitForChild("Variants"))
-    end)
-    
-    return success
-end
-
-local TIER_NAMES = {
-    [1] = "Common",
-    [2] = "Uncommon", 
-    [3] = "Rare",
-    [4] = "Epic",
-    [5] = "Legendary",
-    [6] = "Mythic",
-    [7] = "SECRET"
-}
-
-local TIER_COLORS = {
-    [1] = 9807270,
-    [2] = 3066993,
-    [3] = 3447003,
-    [4] = 10181046,
-    [5] = 15844367,
-    [6] = 15548997,
-    [7] = 16711680
-}
-
+-- Internal State
 local isRunning = false
 local eventConnection = nil
 
-local function getPlayerDisplayName()
-    return LocalPlayer.DisplayName or LocalPlayer.Name
+-- ============================================
+-- 🛠️ HELPER FUNCTIONS
+-- ============================================
+
+-- 1. HTTP Request Handler (Universal)
+local function getHTTPRequest()
+    return (syn and syn.request) or (http and http.request) or http_request or (fluxus and fluxus.request) or request
+end
+local httpRequest = getHTTPRequest()
+
+-- 2. Format Number (1000 -> 1k, 1000000 -> 1M) - Seperti Referensi
+local function formatNumber(n)
+    if not n then return "0" end
+    n = tonumber(n)
+    if not n then return "0" end
+    
+    if n >= 1000000000 then return string.format("%.2fB", n / 1000000000) end
+    if n >= 1000000 then return string.format("%.2fM", n / 1000000) end
+    if n >= 1000 then return string.format("%.2fk", n / 1000) end
+    
+    return tostring(n)
 end
 
-local function getDiscordImageUrl(assetId)
-    if not assetId then return nil end
+-- 3. Get Player Avatar (Headshot) - Seperti Referensi
+local function getPlayerAvatar()
+    local userId = LocalPlayer.UserId
+    local thumbAPI = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds="..userId.."&size=420x420&format=Png&isCircular=false"
     
-    local thumbnailUrl = string.format(
-        "https://thumbnails.roblox.com/v1/assets?assetIds=%s&returnPolicy=PlaceHolder&size=420x420&format=Png&isCircular=false",
-        tostring(assetId)
-    )
+    -- Default fallback
+    local avatarUrl = "https://www.roblox.com/headshot-thumbnail/image?userId="..userId.."&width=420&height=420&format=png"
     
-    local rbxcdnUrl = string.format(
-        "https://tr.rbxcdn.com/180DAY-%s/420/420/Image/Png",
-        tostring(assetId)
-    )
-    
-    -- Coba Thumbnail API dulu (jika httpRequest tersedia)
     if httpRequest then
-        local success, result = pcall(function()
-            local response = httpRequest({
-                Url = thumbnailUrl,
-                Method = "GET"
-            })
-            
-            if response and response.Body then
-                local data = HttpService:JSONDecode(response.Body)
-                if data and data.data and data.data[1] and data.data[1].imageUrl then
-                    return data.data[1].imageUrl
-                end
-            end
+        local success, response = pcall(function()
+            return game:HttpGet(thumbAPI)
         end)
-        
-        if success and result then
-            return result
+        if success then
+            local data = HttpService:JSONDecode(response)
+            if data and data.data and data.data[1] then
+                avatarUrl = data.data[1].imageUrl
+            end
         end
     end
-    
-    -- Fallback ke rbxcdn
-    return rbxcdnUrl
+    return avatarUrl
 end
 
-local function getFishImageUrl(fish)
-    local assetId = nil
+-- 4. Get Fish Image (Thumbnail)
+local function getFishImage(itemId)
+    local itemData = ItemsModule[itemId]
+    if not itemData then return "" end
     
-    if fish.Data.Icon then
-        assetId = tostring(fish.Data.Icon):match("%d+")
-    elseif fish.Data.ImageId then
-        assetId = tostring(fish.Data.ImageId)
-    elseif fish.Data.Image then
-        assetId = tostring(fish.Data.Image):match("%d+")
-    end
+    local iconId = itemData.Icon or itemData.Image or ""
+    -- Extract number from "rbxassetid://12345"
+    local assetId = tostring(iconId):match("%d+")
     
     if assetId then
-        local discordUrl = getDiscordImageUrl(assetId)
-        if discordUrl then
-            return discordUrl
-        end
+        -- Coba ambil link CDN asli agar muncul di Discord
+        return string.format("https://tr.rbxcdn.com/180DAY-%s/420/420/Image/Png", assetId)
     end
-    
-    return "https://i.imgur.com/8yZqFqM.png"
+    return ""
 end
 
-local function getFish(itemId)
-    if not Items then return nil end
-    
-    for _, f in pairs(Items) do
-        if f.Data and f.Data.Id == itemId then
-            return f
-        end
-    end
-end
+-- 5. Tier Colors (Decimal Colors for Discord)
+local TIER_COLORS = {
+    [1] = 9807270,   -- Common (Gray)
+    [2] = 3066993,   -- Uncommon (Green)
+    [3] = 3447003,   -- Rare (Blue)
+    [4] = 10181046,  -- Epic (Purple)
+    [5] = 15844367,  -- Legendary (Orange)
+    [6] = 15548997,  -- Mythic (Red)
+    [7] = 16711680,  -- SECRET (Deep Red/Special)
+    ["Shiny"] = 16776960 -- Gold
+}
 
-local function getVariant(id)
-    if not id or not Variants then return nil end
-    
-    local idStr = tostring(id)
-    
-    for _, v in pairs(Variants) do
-        if v.Data then
-            if tostring(v.Data.Id) == idStr or tostring(v.Data.Name) == idStr then
-                return v
-            end
-        end
-    end
-    
-    return nil
-end
+-- ============================================
+-- 📨 SEND LOGIC
+-- ============================================
 
-local function send(fish, meta, extra)
-    -- Validasi webhook URL
-    if not WebhookModule.Config.WebhookURL or WebhookModule.Config.WebhookURL == "" then
-        return
-    end
+local function sendToDiscord(itemId, meta, extraData)
+    if WebhookModule.Config.WebhookURL == "" or not httpRequest then return end
+
+    -- 1. Ambil Data Ikan dari Module Game
+    local itemData = ItemsModule[itemId]
+    if not itemData then return end
+
+    -- 2. Filter Rarity
+    local tier = itemData.Tier or 1
+    local rarityName = "Common" -- Default
     
-    -- Validasi HTTP request function
-    if not httpRequest then
-        return
-    end
-    
-    local tier = TIER_NAMES[fish.Data.Tier] or "Unknown"
-    local color = TIER_COLORS[fish.Data.Tier] or 3447003
-    
-    -- FILTER RARITY
-    if WebhookModule.Config.EnabledRarities and #WebhookModule.Config.EnabledRarities > 0 then
-        local isEnabled = false
-        
-        for _, enabledTier in ipairs(WebhookModule.Config.EnabledRarities) do
-            if enabledTier == tier then
-                isEnabled = true
-                break
-            end
+    -- Cari nama rarity (Manual mapping karena di module mungkin angka)
+    local rarityMap = {"Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic", "SECRET"}
+    if rarityMap[tier] then rarityName = rarityMap[tier] end
+
+    -- Cek Config Filter
+    local isAllowed = false
+    if #WebhookModule.Config.EnabledRarities > 0 then
+        for _, allowed in ipairs(WebhookModule.Config.EnabledRarities) do
+            if allowed == rarityName then isAllowed = true break end
         end
-        
-        if not isEnabled then
-            return
-        end
+    else
+        isAllowed = true -- Jika tidak ada filter, kirim semua
     end
     
-    local mutationText = "None"
-    local finalPrice = fish.SellPrice or 0
-    local variantId = nil
+    if not isAllowed then return end
+
+    -- 3. Data Detail (Berat, Harga, Mutasi)
+    local weight = meta.Weight or 0
+    local price = itemData.Price or 0
+    local multiplier = 1
+    local mutations = {}
     
-    if extra then
-        variantId = extra.Variant or extra.Mutation or extra.VariantId or extra.MutationId
+    -- Cek Shiny
+    local isShiny = (meta.Shiny or (extraData and extraData.Shiny))
+    if isShiny then 
+        table.insert(mutations, "✨ Shiny") 
+        multiplier = multiplier * 2 
     end
     
-    if not variantId and meta then
-        variantId = meta.Variant or meta.Mutation or meta.VariantId or meta.MutationId
+    -- Cek Big
+    if itemData.BigMin and weight >= itemData.BigMin then
+        table.insert(mutations, "🦈 Big")
+        multiplier = multiplier * 1.2
     end
     
-    local isShiny = (meta and meta.Shiny) or (extra and extra.Shiny)
-    if isShiny then
-        mutationText = "Shiny"
-        finalPrice = finalPrice * 2
-    end
-    
+    -- Cek Mutation Lain (Varian)
+    local variantId = meta.Variant or (extraData and extraData.Variant)
     if variantId then
-        local v = getVariant(variantId)
-        if v then
-            mutationText = v.Data.Name .. " (" .. v.SellMultiplier .. "x)"
-            finalPrice = finalPrice * v.SellMultiplier
-        else
-            mutationText = variantId
+        local variantData = VariantsModule[variantId]
+        if variantData then
+            table.insert(mutations, "🧬 " .. variantData.Name)
+            multiplier = multiplier * (variantData.PriceMultiplier or 1)
         end
     end
     
-    local imageUrl = getFishImageUrl(fish)
-    local playerDisplayName = getPlayerDisplayName()
-    local mention = WebhookModule.Config.DiscordUserID ~= "" and "<@" .. WebhookModule.Config.DiscordUserID .. "> " or ""
-    
-    local congratsMsg = string.format(
-        "%s **%s** You have obtained a new **%s** fish!",
-        mention,
-        playerDisplayName,
-        tier
-    )
-    
-    local fields = {
-        {
-            name = "Fish Name :",
-            value = "> " .. fish.Data.Name,
-            inline = false
+    -- Hitung Harga Akhir
+    local finalPrice = math.floor(price * multiplier * (1 + (weight/100))) -- Rumus estimasi
+    if meta.Price then finalPrice = meta.Price end -- Gunakan harga server jika ada
+
+    -- 4. Construct Payload (Tampilan Discord)
+    local color = TIER_COLORS[tier] or 16777215
+    if isShiny then color = TIER_COLORS["Shiny"] end -- Prioritas warna Gold jika Shiny
+
+    local mutationText = #mutations > 0 and table.concat(mutations, ", ") or "None"
+    local playerLink = "https://www.roblox.com/users/" .. LocalPlayer.UserId .. "/profile"
+
+    local embed = {
+        ["title"] = "🎣 Ikan Baru Ditangkap!",
+        ["description"] = string.format("Player **[%s](%s)** berhasil menangkap ikan baru!", LocalPlayer.DisplayName, playerLink),
+        ["color"] = color,
+        ["thumbnail"] = {
+            ["url"] = getFishImage(itemId)
         },
-        {
-            name = "Fish Tier :",
-            value = "> " .. tier,
-            inline = false
+        ["fields"] = {
+            {
+                ["name"] = "🐟 Fish Name",
+                ["value"] = "**" .. itemData.Name .. "**",
+                ["inline"] = true
+            },
+            {
+                ["name"] = "💎 Rarity",
+                ["value"] = "**" .. rarityName .. "**",
+                ["inline"] = true
+            },
+            {
+                ["name"] = "⚖️ Weight",
+                ["value"] = "`" .. formatNumber(weight) .. " kg`",
+                ["inline"] = true
+            },
+            {
+                ["name"] = "💰 Value",
+                ["value"] = "`$" .. formatNumber(finalPrice) .. "`",
+                ["inline"] = true
+            },
+            {
+                ["name"] = "🧬 Mutation",
+                ["value"] = mutationText,
+                ["inline"] = false
+            }
         },
-        {
-            name = "Weight :",
-            value = string.format("> %.2f Kg", meta.Weight or 0),
-            inline = false
+        ["footer"] = {
+            ["text"] = "Jazzy Hook System • " .. os.date("%H:%M:%S"),
+            ["icon_url"] = "https://i.imgur.com/4M7IwwP.png" -- Icon Footer (bisa diganti)
         },
-        {
-            name = "Mutation :",
-            value = "> " .. mutationText,
-            inline = false
-        },
-        {
-            name = "Sell Price :",
-            value = "> $" .. math.floor(finalPrice),
-            inline = false
-        }
+        ["timestamp"] = os.date("!%Y-%m-%dT%H:%M:%SZ")
     }
-    
+
+    -- Tambahan Mention Discord ID
+    local contentMsg = ""
+    if WebhookModule.Config.DiscordUserID ~= "" then
+        contentMsg = "<@" .. WebhookModule.Config.DiscordUserID .. ">"
+    end
+
     local payload = {
-        embeds = {{
-            author = {
-                name = "Jazzyx Webhook | Fish Caught"
-            },
-            description = congratsMsg,
-            color = color,
-            fields = fields,
-            image = {
-                url = imageUrl
-            },
-            footer = {
-                text = "Jazzyx Webhook • " .. os.date("%m/%d/%Y %H:%M"),
-                icon_url = "https://i.imgur.com/shnNZuT.png"
-            },
-            timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
-        }}
+        ["username"] = "Jazzy Fish Notifier", -- Nama Bot
+        ["avatar_url"] = getPlayerAvatar(),   -- Foto Profil Bot (Avatar Player)
+        ["content"] = contentMsg,
+        ["embeds"] = {embed}
     }
-    
-    pcall(function()
-        httpRequest({
-            Url = WebhookModule.Config.WebhookURL,
-            Method = "POST",
-            Headers = {
-                ["Content-Type"] = "application/json"
-            },
-            Body = HttpService:JSONEncode(payload)
-        })
-    end)
+
+    -- 5. Kirim Request
+    httpRequest({
+        Url = WebhookModule.Config.WebhookURL,
+        Method = "POST",
+        Headers = {["Content-Type"] = "application/json"},
+        Body = HttpService:JSONEncode(payload)
+    })
 end
+
+-- ============================================
+-- 🕹️ MODULE FUNCTIONS
+-- ============================================
 
 function WebhookModule:SetWebhookURL(url)
     self.Config.WebhookURL = url
@@ -306,88 +242,46 @@ function WebhookModule:SetDiscordUserID(id)
     self.Config.DiscordUserID = id
 end
 
-function WebhookModule:SetDebugMode(enabled)
-    self.Config.DebugMode = enabled
-end
-
 function WebhookModule:SetEnabledRarities(rarities)
     self.Config.EnabledRarities = rarities
 end
 
-function WebhookModule:SetSimpleMode(enabled)
-    self.Config.UseSimpleMode = enabled
-end
-
-function WebhookModule:GetTierNames()
-    return TIER_NAMES
+function WebhookModule:IsSupported()
+    return httpRequest ~= nil
 end
 
 function WebhookModule:Start()
-    if isRunning then
-        return false
-    end
+    if isRunning then return end
+    if not self.Config.WebhookURL or self.Config.WebhookURL == "" then return end
     
-    if not self.Config.WebhookURL or self.Config.WebhookURL == "" then
-        return false
-    end
+    -- Connect ke Remote Event Asli Game
+    -- Logika asli Anda tetap dipertahankan di sini:
+    local net = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net")
+    local notificationEvent = net:WaitForChild("RE/ObtainedNewFishNotification")
     
-    if not httpRequest then
-        return false
-    end
-    
-    -- Load game modules
-    if not loadGameModules() then
-        return false
-    end
-    
-    local success, Event = pcall(function()
-        return ReplicatedStorage.Packages
-            ._Index["sleitnick_net@0.2.0"]
-            .net["RE/ObtainedNewFishNotification"]
-    end)
-    
-    if not success or not Event then
-        return false
-    end
-    
-    eventConnection = Event.OnClientEvent:Connect(function(itemId, metadata, extraData)
-        local fish = getFish(itemId)
-        if fish then
+    if notificationEvent then
+        isRunning = true
+        eventConnection = notificationEvent.OnClientEvent:Connect(function(itemId, meta, extra)
+            -- Jalankan di thread terpisah agar tidak mengganggu main thread
             task.spawn(function()
-                send(fish, metadata, extraData)
+                sendToDiscord(itemId, meta, extra)
             end)
-        end
-    end)
-    
-    isRunning = true
-    return true
+        end)
+        print("✅ Webhook Started (Refined Style)")
+    end
+    return isRunning
 end
 
 function WebhookModule:Stop()
-    if not isRunning then
-        return false
-    end
-    
+    isRunning = false
     if eventConnection then
         eventConnection:Disconnect()
         eventConnection = nil
     end
-    
-    isRunning = false
-    return true
 end
 
-function WebhookModule:IsRunning()
-    return isRunning
-end
-
-function WebhookModule:GetConfig()
-    return self.Config
-end
-
--- Check if executor supports webhook
-function WebhookModule:IsSupported()
-    return httpRequest ~= nil
-end
+-- Compatibility functions (agar tidak error dipanggil UI lama)
+function WebhookModule:SetDebugMode() end
+function WebhookModule:SetSimpleMode() end
 
 return WebhookModule
