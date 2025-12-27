@@ -272,7 +272,7 @@ local function send(fish, meta, extra)
         ["avatar_url"] = playerAvatarUrl,    -- Avatar Bot = Avatar Player
         embeds = {{
             author = {
-                name = "Jazzyx Webhook | Fish Caught"
+                name = "Jazzy Webhook | Fish Caught"
             },
             description = congratsMsg,
             color = color,
@@ -281,7 +281,7 @@ local function send(fish, meta, extra)
                 url = imageUrl
             },
             footer = {
-                text = "Jazzyx Webhook • " .. os.date("%m/%d/%Y %H:%M"),
+                text = "Jazzy Webhook • " .. os.date("%m/%d/%Y %H:%M"),
                 icon_url = "https://i.imgur.com/shnNZuT.png"
             },
             timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
