@@ -256,11 +256,16 @@ local function send(fish, meta, extra)
     end
     
  
-    local chanceText = (fish.Data.ChanceVal > 0) and ("1 in " .. formatNumber(fish.Data.ChanceVal)) or "Unknown"
+    local chanceText = (fish.Probability.Chance > 0) and ("1 in " .. formatNumber(fish.Probability.Chance)) or "Unknown"
     local imageUrl = getFishImageUrl(fish)
     local playerDisplayName = getPlayerDisplayName()
     local mention = WebhookModule.Config.DiscordUserID ~= "" and "<@" .. WebhookModule.Config.DiscordUserID .. "> " or ""
     
+    local fishName = fish.Data.Name
+    if fish.Weight and fish.Weight.Big and meta.Weight and meta.Weight >= fish.Weight.Big then
+        fishName = "Big " .. fishName
+    end
+
     local congratsMsg = string.format(
         "%s **%s** You have obtained a new **%s** fish!",
         mention,
@@ -271,7 +276,7 @@ local function send(fish, meta, extra)
     local fields = {
         {
             name = "Fish Name :",
-            value = "> " .. fish.Data.Name,
+            value = "> " .. fishName,
             inline = false
         },
         {
