@@ -1,5 +1,6 @@
--- ⚠️ BLATANT V2 - STABLE FAST EDITION (FIXED ARGUMENTS)
--- Fix: Argumen Remote disesuaikan dengan versi game saat ini
+-- [[ BLATANT FIXED V1 - STABLE FAST EDITION ]]
+-- Filename: BlatantFixedV1.lua
+-- Fixes: Argument Error, Ghost Cast, & Character Stuck
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
@@ -16,22 +17,20 @@ local RF_UpdateAutoFishingState = netFolder:WaitForChild("RF/UpdateAutoFishingSt
 local RE_FishingCompleted = netFolder:WaitForChild("RE/FishingCompleted")
 local RE_MinigameChanged = netFolder:WaitForChild("RE/FishingMinigameChanged")
 
-local fishing = {
-    Running = false,
-    Stats = { Casts = 0 },
-    Settings = {
-        ChargeDelay = 0.15,   -- Wajib ada
-        CompleteDelay = 0.05, -- Jeda sebelum tarik
-        CancelDelay = 0.15,   -- Jeda reset
-        PostCastDelay = 0.1   -- Jeda antar loop
-    }
+local BlatantFixedV1 = {}
+BlatantFixedV1.Active = false
+BlatantFixedV1.Stats = {
+    castCount = 0,
+    startTime = 0
 }
 
-_G.FishingScript = fishing
-
-local function log(msg)
-    print("[⚡Fishing] " .. msg)
-end
+-- [[ PENGATURAN "SWEET SPOT" (STABIL & CEPAT) ]]
+BlatantFixedV1.Settings = {
+    ChargeDelay = 0.15,   -- Wajib 0.15+ agar server mendeteksi charge
+    CompleteDelay = 0.05, -- Jeda sebelum tarik ikan
+    CancelDelay = 0.15,   -- Jeda reset animasi
+    PostCastDelay = 0.1   -- Jeda napas antar putaran
+}
 
 local function safeFire(remote, args)
     task.spawn(function()
@@ -39,90 +38,107 @@ local function safeFire(remote, args)
     end)
 end
 
--- [[ LOGIKA UTAMA (ARGUMENTS FIXED) ]] --
+-- [[ LOGIKA UTAMA (SMART LOOP) ]] --
 local function runFishingLoop()
-    while fishing.Running do
+    while BlatantFixedV1.Active do
         local startTime = tick()
         
         -- 1. CHARGE (Isi Tenaga)
-        -- [FIX] Menggunakan index [10] sesuai script asli game
+        -- Menggunakan index [10] sesuai script asli game
         pcall(function()
             RF_ChargeFishingRod:InvokeServer({[10] = startTime})
         end)
         
-        task.wait(fishing.Settings.ChargeDelay)
+        -- Tunggu agar server memproses status "Charging"
+        task.wait(BlatantFixedV1.Settings.ChargeDelay)
         
         -- 2. LEMPAR (Request Minigame)
         local releaseTime = tick()
         
-        -- [FIX] Menggunakan power 10 (atau 9) sesuai script asli
-        -- Kita gunakan pcall agar jika gagal tidak mematikan script
-        local success, result = pcall(function()
-            -- Arg 1: Power (10), Arg 2: Cursor (0), Arg 3: Time
+        -- [VALIDASI] Kita tanya server: "Lemparan sukses gak?"
+        -- Menggunakan Power 10
+        local success, castResult = pcall(function()
             return RF_RequestMinigame:InvokeServer(10, 0, releaseTime)
         end)
         
-        fishing.Stats.Casts = fishing.Stats.Casts + 1
-        
-        -- 3. EKSEKUSI (BLATANT MODE)
-        -- Kita tidak menunggu "result" true/false karena kadang server tidak return apa-apa
-        -- Kita langsung asumsikan berhasil (Blatant Style)
-        
-        task.wait(fishing.Settings.CompleteDelay)
-        
-        -- TARIK IKAN
-        safeFire(RE_FishingCompleted)
-        
-        -- RESET POSISI
-        task.wait(fishing.Settings.CancelDelay)
-        safeFire(RF_CancelFishingInputs)
+        if success and castResult then
+            -- [KONDISI A: SUKSES] Server menerima lemparan
+            BlatantFixedV1.Stats.castCount = BlatantFixedV1.Stats.castCount + 1
+            
+            -- Tunggu sebentar (Reflex Manusia)
+            task.wait(BlatantFixedV1.Settings.CompleteDelay)
+            
+            -- TARIK IKAN
+            safeFire(RE_FishingCompleted)
+            
+            -- RESET POSISI
+            task.wait(BlatantFixedV1.Settings.CancelDelay)
+            safeFire(RF_CancelFishingInputs)
+        else
+            -- [KONDISI B: GAGAL] Server menolak (Cooldown/Lag)
+            -- JANGAN TARIK IKAN! Langsung reset agar tidak stuck.
+            safeFire(RF_CancelFishingInputs)
+            
+            -- Hukuman waktu agar server bernapas
+            task.wait(0.25)
+        end
 
-        -- Jeda Napas
-        task.wait(fishing.Settings.PostCastDelay)
+        -- Jeda Napas Antar Loop (Penting untuk Sinkronisasi)
+        task.wait(BlatantFixedV1.Settings.PostCastDelay)
     end
 end
 
--- Backup Listener (Jika macet)
+-- Backup Listener (Hanya jaga-jaga jika script macet total)
 RE_MinigameChanged.OnClientEvent:Connect(function(state)
-    if not fishing.Running then return end
+    if not BlatantFixedV1.Active then return end
+    
+    -- Jika tiba-tiba muncul minigame (berarti loop lolos), selesaikan saja
     if type(state) == "string" and state:lower():find("hook") then
-        task.wait(fishing.Settings.CompleteDelay)
+        task.wait(BlatantFixedV1.Settings.CompleteDelay)
         safeFire(RE_FishingCompleted)
-        task.wait(fishing.Settings.CancelDelay)
+        task.wait(BlatantFixedV1.Settings.CancelDelay)
         safeFire(RF_CancelFishingInputs)
     end
 end)
 
--- [[ FUNGSI KONTROL ]] --
+----------------------------------------------------------------
+-- PUBLIC API
+----------------------------------------------------------------
 
-function fishing.Start()
-    if fishing.Running then return end
-    fishing.Running = true
-    fishing.Stats.Casts = 0
+function BlatantFixedV1.UpdateSettings(completeDelay, cancelDelay)
+    if completeDelay then BlatantFixedV1.Settings.CompleteDelay = completeDelay end
+    if cancelDelay then BlatantFixedV1.Settings.CancelDelay = cancelDelay end
+    print("✅ BlatantFixedV1 Settings Updated")
+end
+
+function BlatantFixedV1.Start()
+    if BlatantFixedV1.Active then return end
     
-    log("🚀 BLATANT V2 STARTED (ARGUMENT FIXED)")
+    BlatantFixedV1.Active = true
+    BlatantFixedV1.Stats.castCount = 0
+    BlatantFixedV1.Stats.startTime = tick()
     
-    -- Reset awal
+    print("🚀 BlatantFixedV1 (Stable) Started")
+    
+    -- Reset status awal
     safeFire(RF_CancelFishingInputs)
     task.wait(0.3)
     
+    -- Jalankan Loop di thread terpisah
     task.spawn(runFishingLoop)
 end
 
-function fishing.Stop()
-    if not fishing.Running then return end
-    fishing.Running = false
+function BlatantFixedV1.Stop()
+    if not BlatantFixedV1.Active then return end
     
-    -- Cleanup
+    BlatantFixedV1.Active = false
+    
+    -- Aktifkan kembali auto-fishing game & Reset
     safeFire(RF_UpdateAutoFishingState, {true})
     task.wait(0.2)
     safeFire(RF_CancelFishingInputs)
     
-    log("🛑 STOPPED")
+    print("🛑 BlatantFixedV1 Stopped. Casts: " .. BlatantFixedV1.Stats.castCount)
 end
 
-function fishing.UpdateSettings(k, v)
-    if fishing.Settings[k] then fishing.Settings[k] = v end
-end
-
-return fishing
+return BlatantFixedV1
