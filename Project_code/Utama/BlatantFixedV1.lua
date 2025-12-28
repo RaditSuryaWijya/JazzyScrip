@@ -55,7 +55,6 @@ local function ultraSpamLoop()
         local startTime = tick()
         
         -- 1. CHARGE (Mulai)
-        -- Gunakan FireServer agar lebih cepat, tidak perlu menunggu balasan
         safeFire(RF_ChargeFishingRod, {[1] = startTime})
         
         -- Tunggu agar server sadar kita sedang charging
@@ -64,12 +63,13 @@ local function ultraSpamLoop()
         -- 2. LEMPAR (Request Minigame)
         local releaseTime = tick()
         
+        -- [[ PERUBAHAN UTAMA: VALIDASI ]]
         -- Kita WAJIB pakai InvokeServer di sini untuk memastikan lemparan valid
         local castResult = RF_RequestMinigame:InvokeServer(1, 0, releaseTime)
         
         -- 3. LOGIKA SMART (Anti-Ghost & Anti-Stuck)
         if castResult then
-            -- [SUKSES] Pancingan terlempar
+            -- [SUKSES] Server menerima lemparan -> BARU KITA TARIK
             BlatantV2.Stats.castCount = BlatantV2.Stats.castCount + 1
             BlatantV2.Stats.perfectCasts = BlatantV2.Stats.perfectCasts + 1
             
@@ -84,14 +84,14 @@ local function ultraSpamLoop()
             safeFire(RF_CancelFishingInputs)
         else
             -- [GAGAL] Server menolak lemparan (biasanya karena cooldown/lag)
-            -- Jangan tarik ikan! Langsung reset paksa.
+            -- JANGAN tarik ikan! Langsung reset paksa agar tidak stuck.
             safeFire(RF_CancelFishingInputs)
             
             -- Beri hukuman waktu sedikit agar server tidak spam error
             task.wait(0.25) 
         end
 
-        -- Jeda Napas (Penting agar Ping tidak naik)
+        -- Jeda Napas (Penting agar Ping tidak naik dan urutan tidak tertukar)
         task.wait(BlatantV2.Settings.PostCastDelay)
     end
 end
