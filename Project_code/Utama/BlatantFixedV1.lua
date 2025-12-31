@@ -1,4 +1,4 @@
--- ⚡ BLATANT FIXED V1 - STABLE ROTATION (FINAL)
+-- ⚡ BLATANT FIXED V1 - STABLE ROTATION (FINAL + FORCE SIT)
 -- Fixes: Loop Tertukar, Ghost Cast, & Wrong Arguments
 -- Strategy: Atomic Cycle (Pre-Reset -> Charge -> Cast -> Catch -> Post-Reset)
 
@@ -139,6 +139,14 @@ function BlatantFixedV1.Start()
     
     print("🚀 BlatantFixedV1 (Stable Rotation) Started")
     
+    -- [[ FORCE SIT LOGIC ]] --
+    -- Memaksa karakter duduk sebelum loop dimulai
+    local char = LocalPlayer.Character
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.Sit = true
+    end
+    -- [[ END FORCE SIT ]] --
+    
     -- Reset awal
     safeFire(function() RF_CancelFishingInputs:InvokeServer() end)
     
@@ -161,6 +169,9 @@ function BlatantFixedV1.Stop()
     task.wait(0.2)
     safeFire(function() RF_CancelFishingInputs:InvokeServer() end)
     
+    -- Opsional: Berdiri saat stop (jika diinginkan, uncomment baris bawah ini)
+    -- if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then LocalPlayer.Character.Humanoid.Sit = false end
+
     print("🛑 Stopped. Casts: " .. BlatantFixedV1.Stats.castCount)
     return true
 end
