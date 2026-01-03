@@ -5,7 +5,7 @@ local TeleportModule = {}
 
 TeleportModule.Locations = {
     ["Ancient Jungle"] = Vector3.new(1467.8480224609375, 7.447117328643799, -327.5971984863281),
-    ["Ancient Ruin"] = Vector3.new(6045.40234375, -588.600830078125, 4608.9375),
+    ["Ancient Ruin"] = Vector3.new(6044.60, -588.60, 4610.97),
     ["Coral Reefs"] = Vector3.new(-2921.858154296875, 3.249999761581421, 2083.2978515625),
     ["Crater Island"] = Vector3.new(1078.454345703125, 5.0720038414001465, 5099.396484375),
     ["Classic Island"] = Vector3.new(1253.974853515625, 9.999999046325684, 2816.7646484375),
