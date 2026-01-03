@@ -1,10 +1,11 @@
--- ⚡ BLATANT FIXED V1 - STABLE ROTATION (FINAL + FORCE SIT & LOCK)
+-- ⚡ BLATANT FIXED V1 - STABLE ROTATION (STATE ENFORCED)
 -- Fixes: Loop Tertukar, Ghost Cast, Wrong Arguments
--- Added: Force Sit & Lock Movement (Character Stuck in Place)
+-- Feature: Force State 'Seated' & Animation ID 178130996 (Sesuai Log Spy)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
 -- Network initialization
 local netFolder = ReplicatedStorage
@@ -25,7 +26,6 @@ local RE_FishingStopped = netFolder:WaitForChild("RE/FishingStopped")
 local BlatantFixedV1 = {}
 BlatantFixedV1.Active = false
 BlatantFixedV1.CurrentSeat = nil
--- Menyimpan speed asli buat dikembalikan nanti
 BlatantFixedV1.OriginalStats = { WalkSpeed = 16, JumpPower = 50 } 
 BlatantFixedV1.Stats = {
     castCount = 0,
@@ -34,10 +34,10 @@ BlatantFixedV1.Stats = {
 
 -- [[ SETTINGAN FIX ]]
 BlatantFixedV1.Settings = {
-    ChargeDelay = 0.15,   -- Waktu minimal menahan pancingan
-    CompleteDelay = 0.05, -- Jeda sebelum tarik
-    CancelDelay = 0.15,   -- Jeda reset animasi
-    ReCastDelay = 0.05    -- Jeda antar putaran
+    ChargeDelay = 0.15,   
+    CompleteDelay = 0.05, 
+    CancelDelay = 0.15,   
+    ReCastDelay = 0.05    
 }
 
 -- State tracking
@@ -55,11 +55,31 @@ local function safeFire(func)
     end)
 end
 
--- [[ LOGIKA UTAMA (FIXED ROTATION) ]] --
+-- Fungsi Memaksa State Sesuai Log Spy
+local function enforceSeatedState()
+    local char = LocalPlayer.Character
+    local human = char and char:FindFirstChild("Humanoid")
+    
+    -- Cek 1: Apakah Humanoid ada?
+    if not human then return end
+    
+    -- Cek 2: Apakah State sesuai log (Seated)?
+    if human:GetState() ~= Enum.HumanoidStateType.Seated then
+        -- Jika tidak duduk, kita paksa duduk lagi di kursi kita
+        if BlatantFixedV1.CurrentSeat then
+            BlatantFixedV1.CurrentSeat:Sit(human)
+        end
+    end
+end
+
+-- [[ LOGIKA UTAMA ]] --
 local function fishingLoop()
     while BlatantFixedV1.Active do
         FishingState.isInCycle = true
         local startTime = tick()
+        
+        -- [UPDATE] Pastikan State 'Seated' aktif setiap awal putaran
+        enforceSeatedState()
         
         -- [LANGKAH 1: PRE-RESET]
         safeFire(function() RF_CancelFishingInputs:InvokeServer() end)
@@ -132,45 +152,45 @@ function BlatantFixedV1.Start()
     BlatantFixedV1.Stats.startTime = tick()
     FishingState.isInCycle = false
     
-    print("🚀 BlatantFixedV1 (Lock & Sit) Started")
+    print("🚀 BlatantFixedV1 (State Enforced) Started")
     
-    -- [[ FORCE SIT & LOCK MOVEMENT ]] --
+    -- [[ IMPLEMENTASI LOG SPY ]] --
     local char = LocalPlayer.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
     local human = char and char:FindFirstChild("Humanoid")
 
     if root and human then
-        -- 1. Simpan Speed Asli (Biar pas stop bisa jalan lagi)
+        -- Simpan stats asli
         BlatantFixedV1.OriginalStats.WalkSpeed = human.WalkSpeed
         BlatantFixedV1.OriginalStats.JumpPower = human.JumpPower or 50
 
-        -- 2. Matikan Gerakan (Kunci Karakter)
+        -- Kunci Gerakan (Biar State tidak berubah jadi Running/Jumping)
         human.WalkSpeed = 0
         human.JumpPower = 0
         
-        -- 3. Bersihkan kursi lama
+        -- Bersihkan kursi lama
         if BlatantFixedV1.CurrentSeat then 
             BlatantFixedV1.CurrentSeat:Destroy()
             BlatantFixedV1.CurrentSeat = nil
         end
 
-        -- 4. Buat Kursi Baru (Invisible & Anchored)
+        -- Buat Kursi (Sesuai log: ClassName Seat)
         local seat = Instance.new("Seat")
-        seat.Name = "AutoFishSeat"
+        seat.Name = "chair"          -- [UBAH NAMA] Sesuai log kamu biar persis
         seat.Transparency = 1        
         seat.CanCollide = false     
-        seat.Anchored = true         -- [KUNCI POSISI]
+        seat.Anchored = true         
         seat.Size = Vector3.new(1, 1, 1)
         seat.CFrame = root.CFrame    
         seat.Parent = workspace      
 
-        -- 5. Paksa Duduk
+        -- Paksa Duduk (Ini otomatis memicu Animasi ID: 178130996)
         seat:Sit(human)
         BlatantFixedV1.CurrentSeat = seat
     end
-    -- [[ END FORCE LOCK ]] --
+    -- [[ END IMPLEMENTASI ]] --
     
-    -- Reset awal & Update State
+    -- Reset Network
     safeFire(function() RF_CancelFishingInputs:InvokeServer() end)
     safeFire(function() RF_UpdateAutoFishingState:InvokeServer(true) end)
     
@@ -185,12 +205,12 @@ function BlatantFixedV1.Stop()
     BlatantFixedV1.Active = false
     FishingState.isInCycle = false
     
-    -- Cleanup Fishing
+    -- Cleanup Network
     safeFire(function() RF_UpdateAutoFishingState:InvokeServer(true) end)
     task.wait(0.2)
     safeFire(function() RF_CancelFishingInputs:InvokeServer() end)
     
-    -- [[ UNLOCK MOVEMENT ]] --
+    -- Cleanup Seat & State
     if BlatantFixedV1.CurrentSeat then
         BlatantFixedV1.CurrentSeat:Destroy()
         BlatantFixedV1.CurrentSeat = nil
@@ -198,15 +218,14 @@ function BlatantFixedV1.Stop()
     
     local char = LocalPlayer.Character
     if char and char:FindFirstChild("Humanoid") then
-        -- Kembalikan kemampuan jalan & lompat
+        -- Kembalikan kemampuan gerak
         char.Humanoid.WalkSpeed = BlatantFixedV1.OriginalStats.WalkSpeed
         char.Humanoid.JumpPower = BlatantFixedV1.OriginalStats.JumpPower
         
-        -- Paksa berdiri
+        -- Paksa Ubah State ke Jumping (Berdiri)
         char.Humanoid.Sit = false
         char.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
     end
-    -- [[ END UNLOCK ]] --
     
     print("🛑 Stopped. Casts: " .. BlatantFixedV1.Stats.castCount)
     return true
